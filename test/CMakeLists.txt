@@ -106,6 +106,5 @@ endforeach()
 set_tests_properties(
     test_plugin
     PROPERTIES
-    ENVIRONMENT
     ARGS=--order rand --warn NoAssertions
 )
