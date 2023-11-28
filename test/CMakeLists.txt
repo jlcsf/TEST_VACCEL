@@ -106,6 +106,6 @@ endforeach()
 set_tests_properties(
     test_plugin
     PROPERTIES
-    ENVIRONMENT "VACCEL_DEBUG_LEVEL=4"
+    ENVIRONMENT
     ARGS=--order rand --warn NoAssertions
 )
