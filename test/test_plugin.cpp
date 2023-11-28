@@ -39,11 +39,13 @@ TEST_CASE("plugin_register") {
     SECTION("normal plugin initialisation") 
     {
         REQUIRE(register_plugin(&plugin) == VACCEL_OK);
+        plugins_shutdown();
     }
 
     SECTION("null plugin initialisation")
     {
         REQUIRE(register_plugin(NULL) == VACCEL_EINVAL);
+        plugins_shutdown();
     }
 
     SECTION("null plugin name")
@@ -55,6 +57,7 @@ TEST_CASE("plugin_register") {
         plugin.entry.prev = &(plugin.entry);
 
         REQUIRE(register_plugin(&plugin) == VACCEL_EINVAL);
+        plugins_shutdown();
     }
 
     SECTION("not boostrapped")
@@ -87,10 +90,10 @@ TEST_CASE("plugin_register") {
         pinfo = temp;
 
         REQUIRE(register_plugin(&plugin) == VACCEL_OK);
-       
+        plugins_shutdown();
+
     }
 
-    plugins_shutdown();
 }
 
 TEST_CASE("plugin_unregister") {
