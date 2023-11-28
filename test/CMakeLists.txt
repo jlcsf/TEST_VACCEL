@@ -106,6 +106,6 @@ endforeach()
 set_tests_properties(
     test_plugin
     PROPERTIES
-    ENVIRONMENT "VACCEL_DEBUG_LEVEL=4;VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/noop/libvaccel-noop.so"
+    ENVIRONMENT "VACCEL_DEBUG_LEVEL=4"
     ARGS=--order rand --warn NoAssertions
 )
