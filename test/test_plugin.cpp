@@ -66,8 +66,8 @@ TEST_CASE("plugin_register") {
 
     SECTION("plugin already registered")
     {
-        // REQUIRE(register_plugin(&plugin) == VACCEL_OK);
-        // REQUIRE(register_plugin(&plugin) == VACCEL_EEXISTS);
+        REQUIRE(register_plugin(&plugin) == VACCEL_OK);
+        REQUIRE(register_plugin(&plugin) == VACCEL_EEXISTS);
     }
     
     SECTION("plugin list is not empty")
