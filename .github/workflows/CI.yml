@@ -122,9 +122,19 @@ jobs:
         make test ARGS="-V"
         cd  ../
         
-        mkdir build_${{matrix.build_type}}/coverage_data -p
-        find build_${{matrix.build_type}} -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
-        find build_${{matrix.build_type}} -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
+        echo "Contents of build_${{matrix.build_type}}:"
+        ls -R build_${{matrix.build_type}}
+        
+        echo "Creating build/coverage_data directory..."
+        mkdir -p build_${{matrix.build_type}}/coverage_data
+        
+        echo "Copying files to build/coverage_data:"
+        find build_${{matrix.build_type}} -type f -name "*.gcda" -exec cp {} build_${{matrix.build_type}}/coverage_data/ \;
+        find build_${{matrix.build_type}} -type f -name "*.gcno" -exec cp {} build_${{matrix.build_type}}/coverage_data/ \;
+        
+        echo "Contents of build/coverage_data:"
+        ls -R build_${{matrix.build_type}}/coverage_data
+
         cd build_${{matrix.build_type}}/coverage_data
         lcov -b ../src -c -d coverage_data -o total_coverage.info
         lcov --remove total_coverage.info "/usr/include/*" "*/build/_deps/*" -o total_coverage_filtered.info
