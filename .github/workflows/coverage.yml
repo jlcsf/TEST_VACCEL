@@ -43,7 +43,7 @@ jobs:
         find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
         find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
 
-        gcovr --html --gcov-executable gcov-12 -o coverage.html --print-summary
+        gcovr --html --gcov-executable gcov-12 -o coverage.html --print-summary -e "build/_deps/*"
     
         echo "Setting up git configuration..."
         git config --local user.email "actions@github.com"
