@@ -35,7 +35,7 @@ jobs:
         make
         make test ARGS="-V"
         cd ../
-        
+
         echo "Creating build/coverage_data directory..."
         mkdir -p build/coverage_data
         
@@ -44,7 +44,7 @@ jobs:
         find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
 
         mkdir -p coverage
-        gcovr --html-details --gcov-executable gcov-12 -o coverage/coverage_report.html --filter "build/_deps/*"
+        gcovr --html-details --gcov-executable gcov-12 -o coverage/coverage_report.html
     
         echo "Setting up git configuration..."
         git config --local user.email "actions@github.com"
