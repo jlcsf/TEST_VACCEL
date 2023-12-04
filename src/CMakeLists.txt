@@ -7,7 +7,7 @@ file(GLOB_RECURSE headers *.h)
 add_library(vaccel SHARED ${headers} ${sources})
 
 if (ENABLE_COVERAGE)
-    target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread -fprofile-arcs -ftest-coverage)
+    target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread --coverage)
 else()
     target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread)
 endif()
