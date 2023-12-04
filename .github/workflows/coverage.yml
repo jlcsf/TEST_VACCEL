@@ -31,7 +31,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DCMAKE_CXX_COMPILER=g++-12 -DENABLE_COVERAGE=ON
+        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON
         make
         make test ARGS="-V"
         cd  ../
