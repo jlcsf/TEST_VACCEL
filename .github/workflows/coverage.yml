@@ -23,7 +23,7 @@ jobs:
 
     - name: Install dependencies for tests
       id: install_dependencies
-      run : sudo apt update && sudo apt-get install -y lcov cmake gcc g++ libclang-dev 
+      run : sudo apt update && sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr
 
     
     - name: Run Coverage
