@@ -43,8 +43,6 @@ jobs:
         find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
         find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
 
-        cd build/coverage_data
-
         gcovr --gcov-executable gcov-12
 
         # echo "LCOV output to total coverage"
