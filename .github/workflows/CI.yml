@@ -116,7 +116,8 @@ jobs:
     - name: Run Coverage
       id: run_coverage
       run: |
-        mkdir build_${{matrix.build_type}}/coverage_data
+        ls
+        mkdir build_${{matrix.build_type}}/coverage_data -p
         find build_${{matrix.build_type}} -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
         find build_${{matrix.build_type}} -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
         cd build_${{matrix.build_type}}
