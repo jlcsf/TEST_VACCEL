@@ -116,8 +116,12 @@ jobs:
     - name: Run Coverage
       id: run_coverage
       run: |
-        ls
         cd build_${{matrix.build_type}}
+        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        make
+        make test ARGS="-V"
+        cd  ../
+        
         mkdir build_${{matrix.build_type}}/coverage_data -p
         find build_${{matrix.build_type}} -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
         find build_${{matrix.build_type}} -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
