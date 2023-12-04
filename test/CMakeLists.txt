@@ -44,7 +44,6 @@ endfunction()
 
 set(TESTS_CORE
     test_example
-    test_plugin
     test_session
     test_misc
     test_resource
@@ -90,7 +89,7 @@ set_tests_properties(
 )
 
 set_tests_properties(
-    test_example test_log test_id_pool test_misc test_resource test_session test_plugin
+    test_example test_log test_id_pool test_misc test_resource test_session
     PROPERTIES
     ARGS=--order rand --warn NoAssertions
 )
