@@ -134,6 +134,6 @@ jobs:
         echo "LCOV output to total coverage"
         lcov -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build_${{matrix.build_type}}/coverage_data -o total_coverage.info
 
-        echo "Generate HTML"
+        echo "Generate HTMsL"
         genhtml total_coverage_filtered.info --output-directory coverage_report
 
