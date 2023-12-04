@@ -8,7 +8,6 @@ add_library(vaccel SHARED ${headers} ${sources})
 
 if (ENABLE_COVERAGE)
     target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread --coverage)
-    target_link_libraries(vaccel PUBLIC gcov)
 else()
     target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread)
 endif()
