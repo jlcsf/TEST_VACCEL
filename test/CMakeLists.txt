@@ -9,7 +9,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-set(COMMON_COMPILE_OPTIONS -Wall -Wextra -g -ggdb --coverage -fprofile-arcs )
+set(COMMON_COMPILE_OPTIONS -Wall -Wextra -g -ggdb --coverage -lgcov)
 
 # Function to simplify adding tests
 function(add_test_target_core TARGET_NAME SOURCE_FILE)
@@ -22,7 +22,7 @@ function(add_test_target_core TARGET_NAME SOURCE_FILE)
             ./fff
     )
     target_compile_options(${TARGET_NAME} PRIVATE ${COMMON_COMPILE_OPTIONS})
-    target_link_libraries(${TARGET_NAME} PRIVATE Catch2::Catch2WithMain vaccel --coverage -fprofile-arcs )
+    target_link_libraries(${TARGET_NAME} PRIVATE Catch2::Catch2WithMain vaccel gcov --coverage)
     add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 endfunction()
 
@@ -38,7 +38,7 @@ function(add_test_target_api TARGET_NAME SOURCE_FILE)
             ../src/resources
     )
     target_compile_options(${TARGET_NAME} PRIVATE ${COMMON_COMPILE_OPTIONS})
-    target_link_libraries(${TARGET_NAME} PRIVATE Catch2::Catch2WithMain vaccel --coverage -fprofile-arcs )
+    target_link_libraries(${TARGET_NAME} PRIVATE Catch2::Catch2WithMain vaccel gcov --coverage)
     add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 endfunction()
 
