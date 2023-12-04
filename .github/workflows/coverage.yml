@@ -33,7 +33,6 @@ jobs:
         cd build
         make clean
         cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12
-        
         make
         make test ARGS="-V"
         cd  ../
@@ -48,7 +47,8 @@ jobs:
         cd build/coverage_data
 
         echo "LCOV output to total coverage"
-        lcov -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build/coverage_data -o total_coverage.info
+        gcov --version
+        lcov --exclude '/usr/include/*' -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build/coverage_data -o total_coverage.info
 
         echo "Generate HTMsL"
         genhtml total_coverage_filtered.info --output-directory coverage_report
