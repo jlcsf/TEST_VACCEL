@@ -128,14 +128,11 @@ jobs:
         echo "Copying files to build/coverage_data:"
         find build_${{matrix.build_type}} -type f -name "*.gcda" -exec cp {} build_${{matrix.build_type}}/coverage_data/ \;
         find build_${{matrix.build_type}} -type f -name "*.gcno" -exec cp {} build_${{matrix.build_type}}/coverage_data/ \;
-        
-        echo "Contents of build/coverage_data:"
-        ls -R build_${{matrix.build_type}}/coverage_data
 
         cd build_${{matrix.build_type}}/coverage_data
 
         echo "LCOV output to total coverage"
-        lcov -b ../src -c -d coverage_data -o total_coverage.info
+        lcov -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build_${{matrix.build_type}}/coverage_data -o total_coverage.info
 
         echo "Filter output"
         lcov --remove total_coverage.info "/usr/include/*" "*/build/_deps/*" -o total_coverage_filtered.info
