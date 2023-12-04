@@ -45,10 +45,11 @@ jobs:
 
         cd build/coverage_data
 
-        echo "LCOV output to total coverage"
-        gcov --version
-        lcov --exclude '/usr/include/*' -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build/coverage_data -o total_coverage.info
+        gcovr --gcov-executable gcov-12
 
-        echo "Generate HTMsL"
-        genhtml total_coverage_filtered.info --output-directory coverage_report
+        # echo "LCOV output to total coverage"
+        # lcov --exclude '/usr/include/*' -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build/coverage_data -o total_coverage.info
+
+        # echo "Generate HTMsL"
+        # genhtml total_coverage_filtered.info --output-directory coverage_report
 
