@@ -6,10 +6,11 @@ file(GLOB_RECURSE headers *.h)
 
 add_library(vaccel SHARED ${headers} ${sources})
 
-target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread)
-
 if (ENABLE_COVERAGE)
-    target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread --coverage -lgcov)
+    target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread --coverage)
+    target_link_libraries(vaccel PUBLIC gcov)
+else()
+    target_compile_options(vaccel PUBLIC -Wall -Wextra -Werror -pthread)
 endif()
 
 target_include_directories(vaccel PRIVATE ${CMAKE_SOURCE_DIR}/src)
