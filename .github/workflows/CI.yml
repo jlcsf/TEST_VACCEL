@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, "${{ matrix.archconfig }}", gcc, lite ]
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -31,17 +31,6 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: recursive
-
-    - name: Find SHA
-      run: |
-        if [[ "${{github.event.pull_request.head.sha}}" != "" ]]
-        then
-          echo "ARTIFACT_SHA=$(echo ${{github.event.pull_request.head.sha}})" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME=$(echo ${{ github.head_ref || github.ref_name }})" >> $GITHUB_ENV
-        else
-          echo "ARTIFACT_NAME=$(echo ${GITHUB_REF##*/})" >> $GITHUB_ENV
-          echo "ARTIFACT_SHA=$(echo ${{github.sha}})" >> $GITHUB_ENV
-        fi
 
     - name: Build project
       id: build_vaccelrt
