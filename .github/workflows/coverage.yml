@@ -34,7 +34,6 @@ jobs:
         cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DGCOV_EXECUTABLE=gcov-12
         make
         make test ARGS="-V"
-        cd  ../
 
         mkdir -p coverage
         gcovr --html-details --gcov-executable gcov-12 -o coverage/coverage_report.html --filter "build/_deps/*"
