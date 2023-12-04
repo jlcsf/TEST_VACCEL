@@ -112,28 +112,3 @@ jobs:
       shell: bash
       env:
         ARCHITECTURE: ${{ matrix.archconfig }}
-    
-    - name: Run Coverage
-      id: run_coverage
-      run: |
-        cd build_${{matrix.build_type}}
-        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DENABLE_COVERAGE=ON
-        make
-        make test ARGS="-V"
-        cd  ../
-                
-        echo "Creating build/coverage_data directory..."
-        mkdir -p build_${{matrix.build_type}}/coverage_data
-        
-        echo "Copying files to build/coverage_data:"
-        find build_${{matrix.build_type}} -type f -name "*.gcda" -exec cp {} build_${{matrix.build_type}}/coverage_data/ \;
-        find build_${{matrix.build_type}} -type f -name "*.gcno" -exec cp {} build_${{matrix.build_type}}/coverage_data/ \;
-
-        cd build_${{matrix.build_type}}/coverage_data
-
-        echo "LCOV output to total coverage"
-        lcov -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build_${{matrix.build_type}}/coverage_data -o total_coverage.info
-
-        echo "Generate HTMsL"
-        genhtml total_coverage_filtered.info --output-directory coverage_report
-
