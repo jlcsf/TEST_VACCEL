@@ -43,11 +43,16 @@ jobs:
         find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
         find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
 
-        gcovr --gcov-executable gcov-12
-
-        # echo "LCOV output to total coverage"
-        # lcov --exclude '/usr/include/*' -b ${{github.workspace}}/src -c -d ${{github.workspace}}/build/coverage_data -o total_coverage.info
-
-        # echo "Generate HTMsL"
-        # genhtml total_coverage_filtered.info --output-directory coverage_report
-
+        gcovr --html --gcov-executable gcov-12 -o coverage_report.html
+        
+        echo "Copying coverage_report.html to the repository..."
+        cp coverage_report.html ${{github.workspace}}
+    
+        echo "Setting up git configuration..."
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+    
+        echo "Committing and pushing changes..."
+        git add coverage_report.html
+        git commit -m "Update coverage report [skip ci]"
+        git push
