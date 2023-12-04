@@ -44,9 +44,6 @@ jobs:
         find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
 
         gcovr --html --gcov-executable gcov-12 -o coverage_report.html
-        
-        echo "Copying coverage_report.html to the repository..."
-        cp coverage_report.html ${{github.workspace}}
     
         echo "Setting up git configuration..."
         git config --local user.email "actions@github.com"
