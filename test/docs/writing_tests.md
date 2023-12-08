@@ -43,7 +43,6 @@ TEST_CASE(<name of test>)
 }
 ```
 
-
 So far in our test we also use ```SECTIONS``` for nesting test cases within a test. This is equivalent to test fixtures, eventhough catch2 do provide a more traditional approach to test fixtures if needed.
 
 ```cpp
