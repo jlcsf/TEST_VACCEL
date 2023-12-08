@@ -19,6 +19,9 @@ extern "C"
 #include "session.h"
 #include "plugin.h"
 #include "shared_object.h"
+
+#include "../src/vaccel_args.h"
+
 }
 
 struct mydata
