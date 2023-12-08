@@ -25,7 +25,10 @@ jobs:
 
     - name: Install dependencies for tests
       id: install_dependencies
-      run : sudo apt update && sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr
+      run : |
+        sudo apt update && sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr
+        pip install --upgrade gcovr
+        pip install pycobertura
 
     
     - name: Run Coverage
@@ -40,10 +43,9 @@ jobs:
   
     - name: Generate coverage report
       run: |
-        pip install --upgrade gcovr
-        pip install pycobertura
         gcovr --cobertura  --gcov-executable gcov-12 -o ./test/docs/coverage.xml -e "build/_deps/*"
-        pycobertura show --format markdown --output coverage.md ./test/docs/coverage.xml      
+        cd ./test/docs
+        pycobertura show coverage.xml --output coverage.md
     
     # - name: Code Coverage Report
     #   uses: irongut/CodeCoverageSummary@v1.3.0
@@ -69,14 +71,4 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v5
       with: 
         file_pattern: '*.md'
-
-  publish:
-    needs: coverage
-    runs-on: ubuntu-latest
-    steps:
-
-    - name: Check Out the Repo Again
-      uses: actions/checkout@v3
-      with:
-        ref: ${{ needs.update-changelog.outputs.commit_hash }}
 
