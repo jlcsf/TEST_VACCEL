@@ -40,7 +40,7 @@ jobs:
   
     - name: Generate coverage report
       run: |
-        gcovr --cobertura-pretty --gcov-executable gcov-12 -o ./test/coverage.xml -e "build/_deps/*"
+        gcovr --cobertura  --gcov-executable gcov-12 -o ./test/coverage.xml -e "build/_deps/*"
     
     - name: Code Coverage Report
       uses: irongut/CodeCoverageSummary@v1.3.0
