@@ -152,6 +152,7 @@ TEST_CASE("exec_helpers")
 				"mytestfunc_both", read->list, read->size, write->list, write->size);
 
         printf("\n\nINSIDE EXEC_HELPERS\n\n");
+        system("ls ../examples");
 		if (ret) {
 			fprintf(stderr, "Could not run op: %d\n", ret);
 			goto close_session;
