@@ -72,3 +72,13 @@ jobs:
       with: 
         file_pattern: '*.md'
 
+
+  publish:
+    needs: coverage
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check Out the Repo Again
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ needs.update-changelog.outputs.commit_hash }}
