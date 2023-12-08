@@ -151,7 +151,6 @@ TEST_CASE("exec_helpers")
 		ret = vaccel_exec(&sess, "libmytestlib.so",
 				"mytestfunc_both", read->list, read->size, write->list, write->size);
 
-        printf("\n\nINSIDE %d EXEC_HELPERS\n\n", err_sys);
 		if (ret) {
 			fprintf(stderr, "Could not run op: %d\n", ret);
 			goto close_session;
