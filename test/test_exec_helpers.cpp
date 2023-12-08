@@ -34,11 +34,11 @@ void* ser(void* buf, uint32_t* bytes){
 	struct mydata* non_ser = (struct mydata*)buf;
 
 	uint32_t size = (non_ser->size + 1) * sizeof(int);
-	int* ser_buf = malloc(size);
+	int* ser_buf = (int*)malloc(size);
 
 	memcpy(ser_buf, (int*)(&non_ser->size), sizeof(int));
 	
-	for(int i=0; i<non_ser->size; i++)
+	for(int i=0; i<(int)non_ser->size; i++)
 		memcpy(&ser_buf[i+1], &non_ser->array[i], sizeof(int));
 	
 
@@ -48,6 +48,7 @@ void* ser(void* buf, uint32_t* bytes){
 
 
 void* deser(void* buf, uint32_t bytes){
+    printf("bytes: %d\n", (int)bytes);
 	int *ser_buf = (int*)buf;
 	int size = ser_buf[0];
 
@@ -55,7 +56,7 @@ void* deser(void* buf, uint32_t bytes){
 		(struct mydata*)malloc(sizeof(struct mydata));
 
 	new_buf->size = (uint32_t)size;
-	new_buf->array = malloc(new_buf->size * sizeof(int));
+	new_buf->array = (int*)malloc(new_buf->size * sizeof(int));
 	for(int i=0; i<size; i++)
 		memcpy(&new_buf->array[i], &ser_buf[i+1], sizeof(int));
 
@@ -67,8 +68,6 @@ TEST_CASE("exec_helpers")
 {
     int ret;
 	struct vaccel_session sess;
-
-	struct mydata* output_data;
     
     sess.hint = VACCEL_PLUGIN_DEBUG;
     char iterations[] = "1";
@@ -109,16 +108,17 @@ TEST_CASE("exec_helpers")
 
     struct mydata input_data;
     input_data.size = 5;
-	input_data.array = malloc(5*sizeof(int));
+	input_data.array = (int*)malloc(5*sizeof(int));
 	for(int i=0; i<5; i++)
         input_data.array[i] = i+1;
 	
     uint32_t bytes;
     void* serbuf = ser(&input_data, &bytes);
+    free(serbuf);
 
 	vaccel_add_deser_arg(read, &input_data, 0, ser);
     REQUIRE(read->size == 2);
-    REQUIRE(read->list[1].size = bytes);
+    REQUIRE(read->list[1].size == bytes);
     REQUIRE(read->list[1].argtype == 0);
     REQUIRE(read->list[1].buf != NULL);
 
@@ -149,7 +149,7 @@ TEST_CASE("exec_helpers")
 
 	for (int i = 0; i < atoi(iterations); ++i) {
 		ret = vaccel_exec(&sess, "../examples/libmytestlib.so",
-				"mytestfunc_both", read, read->size, write, write->size);
+				"mytestfunc_both", read->list, read->size, write->list, write->size);
 		if (ret) {
 			fprintf(stderr, "Could not run op: %d\n", ret);
 			goto close_session;
@@ -161,15 +161,16 @@ close_session:
     REQUIRE(ret == VACCEL_OK);
 
     // check integer-output correctness
-    REQUIRE(output_int == 20;)
+    REQUIRE(output_int == 20);
     
     // check vaccel_extract_ser_arg()
     int* ptr_out_int = vaccel_extract_ser_arg(write->list, 0);
-    REQUIRE(*ptr_out_int == 20);
+    int resp = *ptr_out_int;
+    REQUIRE(resp == 20);
 
     // check vaccel_extract_deser_arg() and non-ser response correnctness
     struct mydata* out_mydata;
-    out_mydata = vaccel_extract_deser_arg(write->list, 1, deser);
+    out_mydata = (struct mydata*)vaccel_extract_deser_arg(write->list, 1, deser);
     REQUIRE(out_mydata->size == 5);
     REQUIRE(out_mydata->array != NULL);
 
