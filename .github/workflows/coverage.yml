@@ -44,8 +44,7 @@ jobs:
     - name: Generate coverage report
       run: |
         gcovr --cobertura  --gcov-executable gcov-12 -o ./test/docs/coverage.xml -e "build/_deps/*"
-        cd ./test/docs
-        pycobertura show coverage.xml --output coverage.md
+        pycobertura show /test/docs/coverage.xml --output /test/docs/coverage.md
     
     # - name: Code Coverage Report
     #   uses: irongut/CodeCoverageSummary@v1.3.0
