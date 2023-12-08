@@ -41,7 +41,9 @@ jobs:
     - name: Generate coverage report
       run: |
         pip install --upgrade gcovr
-        gcovr --cobertura  --gcov-executable gcov-12 -o ./test/docs/coverage.xml -e "build/_deps/*"        
+        pip install pycobertura
+        gcovr --cobertura  --gcov-executable gcov-12 -o ./test/docs/coverage.xml -e "build/_deps/*"
+        pycobertura --format markdown --output coverage.md ./test/docs/coverage.xml      
     
     # - name: Code Coverage Report
     #   uses: irongut/CodeCoverageSummary@v1.3.0
@@ -56,17 +58,6 @@ jobs:
     #     output: both
     #     thresholds: '60 80'
 
-    - name: Produce the coverage report
-      uses: insightsengineering/coverage-action@v2
-      with:
-        path: ./test/docs/coverage.xml
-        fail: false
-        publish: true
-        diff: true
-        diff-branch: main
-        coverage-summary-title: "Code Coverage Summary"
-
-    
     - name: Configure Git
       run: |
         echo "Setting up git configuration..."
