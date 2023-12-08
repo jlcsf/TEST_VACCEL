@@ -77,7 +77,7 @@ jobs:
       id: commit-and-push
       uses: stefanzweifel/git-auto-commit-action@v5
       with: 
-        file_pattern: '*.xml'
+        file_pattern: '*.md'
 
   publish:
     needs: coverage
