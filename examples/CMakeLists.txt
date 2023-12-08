@@ -13,6 +13,7 @@ set(BIN_EXAMPLES
 	exec
 	exec_with_res
 	exec_generic
+ 	exec_helpers
 	noop
 	sgemm
 	sgemm_generic
