@@ -66,6 +66,7 @@ jobs:
         cd ${{github.workspace}}/artifacts/${{matrix.archconfig}}/${{matrix.build_type}}/opt
         sudo mkdir -p /run/user/1001
         sudo chown -R runner /run/user/1001
+        ls
         ./bin/exec_helpers
     
     - name: Set up dir for armv7l
