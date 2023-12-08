@@ -87,6 +87,7 @@ jobs:
         ./bin/tf_model share/models/tf/frozen_graph.pb
         ./bin/tf_saved_model share/models/tf/lstm2
         ./bin/tf_inference share/models/tf/lstm2
+        ./bin/exec_helpers
     
     - name: Set up dir for armv7l
       id : set_up_dir
