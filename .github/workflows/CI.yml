@@ -67,7 +67,7 @@ jobs:
         sudo mkdir -p /run/user/1001
         sudo chown -R runner /run/user/1001
         ls bin
-        ./bin/exec_helpers
+        ./bin/exec_helpers 1
     
     - name: Set up dir for armv7l
       id : set_up_dir
