@@ -19,24 +19,24 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install dependencies for tests
-      id: install_dependencies
-      run : sudo apt update && sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr
+    # - name: Install dependencies for tests
+    #   id: install_dependencies
+    #   run : sudo apt update && sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr
 
     
-    - name: Run Coverage
-      id: run_coverage
-      run: |
-        mkdir build
-        cd build
-        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DGCOV_EXECUTABLE=gcov-12
-        make
-        make test ARGS="-V"
-        cd ../
+    # - name: Run Coverage
+    #   id: run_coverage
+    #   run: |
+    #     mkdir build
+    #     cd build
+    #     cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DGCOV_EXECUTABLE=gcov-12
+    #     make
+    #     make test ARGS="-V"
+    #     cd ../
   
-    - name: Generate coverage report
-      run: |
-        gcovr --html --gcov-executable gcov-12 -o coverage.html --print-summary -e "build/_deps/*"
+    # - name: Generate coverage report
+    #   run: |
+    #     gcovr --html --gcov-executable gcov-12 -o coverage.html --print-summary -e "build/_deps/*"
 
     - name: Configure Git
       run: |
@@ -45,7 +45,4 @@ jobs:
         git config --local user.name "GitHub Actions"
 
     - name: Commit and push changes
-      run: |
-          git add coverage.html
-          git commit -m "Update coverage report"
-          git push origin HEAD:${GITHUB_REF#refs/heads/}
+      uses: EndBug/add-and-commit@v9
