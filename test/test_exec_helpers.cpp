@@ -150,6 +150,8 @@ TEST_CASE("exec_helpers")
 	for (int i = 0; i < atoi(iterations); ++i) {
 		ret = vaccel_exec(&sess, "../examples/libmytestlib.so",
 				"mytestfunc_both", read->list, read->size, write->list, write->size);
+
+        printf("\n\nINSIDE EXEC_HELPERS\n\n");
 		if (ret) {
 			fprintf(stderr, "Could not run op: %d\n", ret);
 			goto close_session;
