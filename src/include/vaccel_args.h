@@ -55,7 +55,7 @@ void vaccel_write_deser_arg(
 void* vaccel_extract_deser_arg(
     struct vaccel_arg* args, 
     int idx, 
-    void* (*deserializer(void*, uint32_t))
+    void* (*deserializer)(void*, uint32_t)
 );
 
 void* vaccel_extract_ser_arg(

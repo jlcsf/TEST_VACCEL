@@ -164,7 +164,7 @@ close_session:
     REQUIRE(output_int == 20);
     
     // check vaccel_extract_ser_arg()
-    int* ptr_out_int = vaccel_extract_ser_arg(write->list, 0);
+    int* ptr_out_int = (int*)vaccel_extract_ser_arg(write->list, 0);
     int resp = *ptr_out_int;
     REQUIRE(resp == 20);
 
