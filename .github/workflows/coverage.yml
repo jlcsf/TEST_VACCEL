@@ -43,7 +43,7 @@ jobs:
         pip install --upgrade gcovr
         pip install pycobertura
         gcovr --cobertura  --gcov-executable gcov-12 -o ./test/docs/coverage.xml -e "build/_deps/*"
-        pycobertura --format markdown --output coverage.md ./test/docs/coverage.xml      
+        pycobertura show --format markdown --output coverage.md ./test/docs/coverage.xml      
     
     # - name: Code Coverage Report
     #   uses: irongut/CodeCoverageSummary@v1.3.0
