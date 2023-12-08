@@ -2,8 +2,8 @@ name: Coverage
 
 on:
   pull_request:
-    branches:
-      - main
+    types:
+      - closed
 
   workflow_dispatch:
 
