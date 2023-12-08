@@ -14,7 +14,7 @@ extern "C"
 
 TEST_CASE("log level + log file", "[log]")
 {
-    char env_var[] = "VACCEL_DEBUG_LEVEL=4";
+    // char env_var[] = "VACCEL_DEBUG_LEVEL=4";
     // //char env_log[] = "VACCEL_LOG_FILE=1";
     // putenv(env_var);
     // // putenv(env_log);
