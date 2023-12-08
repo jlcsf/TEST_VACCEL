@@ -43,7 +43,7 @@ jobs:
   
     - name: Generate coverage report
       run: |
-        gcovr --cobertura  --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml -e "build/_deps/*"
+        gcovr --cobertura  --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
         pycobertura show ${{github.workspace}}/test/docs/coverage.xml --output ${{github.workspace}}/test/docs/coverage.md
     
     # - name: Code Coverage Report
