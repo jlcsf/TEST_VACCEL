@@ -20,6 +20,7 @@
 #include <unistd.h>
 
 #include <vaccel.h>
+#include "../vaccel_args.h"
 
 int main(int argc, char *argv[])
 {
@@ -54,7 +55,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < atoi(argv[1]); ++i) {
 		ret =
 		    vaccel_exec(&sess, 
-				"/usr/local/lib/libmytestlib.so", "mytestfunc", 
+				"../examples/libmytestlib.so", "mytestfunc", 
 				read->list, read->size, 
 				write->list, write->size);
 		
