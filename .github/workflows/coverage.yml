@@ -75,7 +75,6 @@ jobs:
       with:
         file_pattern: 'coverage.md'
 
-
   publish:
     needs: coverage
     runs-on: ubuntu-latest
