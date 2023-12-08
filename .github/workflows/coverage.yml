@@ -42,7 +42,7 @@ jobs:
       run: |
         pip install --upgrade gcovr
         # gcovr --cobertura  --gcov-executable gcov-12 -o ./test/docs/coverage.xml -e "build/_deps/*"
-        gcovr --html-details  --gcov-executable gcov-12 -o ./test/docs/coverage.html-e "build/_deps/*"
+        gcovr --html-details  --gcov-executable gcov-12 -o ./test/docs/coverage.html -e "build/_deps/*"
         gcovr --html-details  --gcov-executable gcov-12 -o ./test/docs/coverage.html -e "build/_deps/*"
         
     
