@@ -148,11 +148,9 @@ TEST_CASE("exec_helpers")
 
 
 	for (int i = 0; i < atoi(iterations); ++i) {
-		ret = vaccel_exec(&sess, "../examples/libmytestlib.so",
+		ret = vaccel_exec(&sess, "libmytestlib.so",
 				"mytestfunc_both", read->list, read->size, write->list, write->size);
 
-        printf("\n\nSystem: ");
-        int err_sys = system("ls ../examples");
         printf("\n\nINSIDE %d EXEC_HELPERS\n\n", err_sys);
 		if (ret) {
 			fprintf(stderr, "Could not run op: %d\n", ret);
