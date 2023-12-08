@@ -40,6 +40,7 @@ jobs:
   
     - name: Generate coverage report
       run: |
+        pip install --upgrade gcovr
         gcovr --cobertura  --gcov-executable gcov-12 -o ./test/coverage.xml -e "build/_deps/*"
     
     - name: Code Coverage Report
