@@ -42,11 +42,11 @@ jobs:
         cd ../
   
     - name: Generate coverage report
-      run: gcovr --cobertura  --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
+      run: gcovr --cobertura --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
       shell: bash
     
     - name: Produce markdown file
-      run: pycobertura show ${{github.workspace}}/test/docs/coverage.xml --output ${{github.workspace}}/test/docs/coverage.md
+      run: pycobertura show ${{github.workspace}}/test/docs/coverage.xml --format html --output ${{github.workspace}}/test/docs/coverage.md
       shell: bash
         
     
