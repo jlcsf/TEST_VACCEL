@@ -15,6 +15,7 @@ extern "C"{
 
 #include <vaccel.h>
 #include "session.h"
+#include "../src/vaccel_args.h"
 }
 
 
@@ -148,12 +149,12 @@ TEST_CASE("classify_generic")
 
     enum vaccel_op_type op_type = VACCEL_IMG_CLASS;
     struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }};
+		{ .argtype=0, .size = sizeof(enum vaccel_op_type), .buf = &op_type},
+		{ .argtype=0, .size = image_size_uint32, .buf = image }};
 
     struct vaccel_arg write[2] = {
-		{ .size = sizeof(out_text), .buf = out_text },
-		{ .size = sizeof(out_imagename), .buf = out_imagename }};
+		{ .argtype=0, .size = sizeof(out_text), .buf = out_text },
+		{ .argtype=0, .size = sizeof(out_imagename), .buf = out_imagename }};
 
 	for (int i = 0; i < atoi(argv[2]); ++i) {
 		ret = vaccel_genop(&sess, read, 2, write, 2);
@@ -249,11 +250,11 @@ TEST_CASE("depth_generic")
 
     enum vaccel_op_type op_type = VACCEL_IMG_DEPTH;
     struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }};
+		{ .argtype=0, .size = sizeof(enum vaccel_op_type), .buf = &op_type},
+		{ .argtype=0, .size = image_size_uint32, .buf = image }};
 
 	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename }};
+		{ .argtype=0, .size = sizeof(out_imagename), .buf = out_imagename }};
 
 	for (int i = 0; i < atoi(argv[2]); ++i) {
 		ret = vaccel_genop(&sess, read, 2, write, 1);
@@ -349,11 +350,11 @@ TEST_CASE("detect_generic")
 
 	enum vaccel_op_type op_type = VACCEL_IMG_DETEC;
 	struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }
+		{ .argtype=0, .size = sizeof(enum vaccel_op_type), .buf = &op_type},
+		{ .argtype=0, .size = image_size_uint32, .buf = image }
 	};
 	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename },
+		{ .argtype=0, .size = sizeof(out_imagename), .buf = out_imagename },
 	};
 
 	for (int i = 0; i < atoi(argv[2]); ++i) {
@@ -449,8 +450,8 @@ TEST_CASE("pose_generic")
 
 	enum vaccel_op_type op_type = VACCEL_IMG_POSE;
 	struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }
+		{ .argtype=0, .size = sizeof(enum vaccel_op_type), .buf = &op_type},
+		{ .argtype=0, .size = image_size_uint32, .buf = image }
 	};
 	struct vaccel_arg write[1] = {
 		{ .size = sizeof(out_imagename), .buf = out_imagename },
@@ -550,8 +551,8 @@ TEST_CASE("segmentation_generic")
 
 	enum vaccel_op_type op_type = VACCEL_IMG_SEGME;
 	struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }
+		{ .argtype=0, .size = sizeof(enum vaccel_op_type), .buf = &op_type},
+		{ .argtype=0, .size = image_size_uint32, .buf = image }
 	};
 	struct vaccel_arg write[1] = {
 		{ .size = sizeof(out_imagename), .buf = out_imagename },
