@@ -34,11 +34,11 @@ jobs:
         make test ARGS="-V"
         cd ../
 
-    - name: Copy coverage data
-      run: |
-        echo "Copying files to build/coverage_data:"
-        find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
-        find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
+        - name: Copy coverage data
+        run: |
+          echo "Copying files to build/coverage_data:"
+          find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
+          find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
   
     - name: Generate coverage report
       run: |
@@ -50,20 +50,8 @@ jobs:
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
 
-    - name: Commit changes
+    - name: Commit and push changes
       run: |
-        git add coverage.html
-        git commit -m "Update coverage report [skip ci]"
-
-    - name: Push changes to feature branch
-      run: |
-        git push origin HEAD:refs/heads/your-feature-branch
-
-    - name: Create pull request
-      uses: peter-evans/create-pull-request@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "Update coverage report [skip ci]"
-        title: "Update coverage report"
-        branch: your-feature-branch
-        base: main
+          git add coverage.html
+          git commit -m "Update coverage report"
+          git push origin HEAD:refs/heads/your-feature-branch
