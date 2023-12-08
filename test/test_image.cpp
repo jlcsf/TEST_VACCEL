@@ -454,7 +454,7 @@ TEST_CASE("pose_generic")
 		{ .argtype=0, .size = image_size_uint32, .buf = image }
 	};
 	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename },
+		{ .argtype=0, .size = sizeof(out_imagename), .buf = out_imagename },
 	};
 
 	for (int i = 0; i < atoi(argv[2]); ++i) {
@@ -555,7 +555,7 @@ TEST_CASE("segmentation_generic")
 		{ .argtype=0, .size = image_size_uint32, .buf = image }
 	};
 	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename },
+		{ .argtype=0, .size = sizeof(out_imagename), .buf = out_imagename },
 	};
 
 	for (int i = 0; i < atoi(argv[2]); ++i) {
