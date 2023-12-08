@@ -34,11 +34,11 @@ jobs:
         make test ARGS="-V"
         cd ../
 
-        - name: Copy coverage data
-        run: |
-          echo "Copying files to build/coverage_data:"
-          find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
-          find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
+    - name: Copy coverage data
+      run: |
+        echo "Copying files to build/coverage_data:"
+        find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
+        find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
   
     - name: Generate coverage report
       run: |
