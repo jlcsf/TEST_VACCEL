@@ -48,4 +48,4 @@ jobs:
       run: |
           git add coverage.html
           git commit -m "Update coverage report"
-          git push origin HEAD
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
