@@ -42,9 +42,13 @@ jobs:
         cd ../
   
     - name: Generate coverage report
-      run: |
-        gcovr --cobertura  --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
-        pycobertura show ${{github.workspace}}/test/docs/coverage.xml --output ${{github.workspace}}/test/docs/coverage.md
+      run: gcovr --cobertura  --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
+      shell: bash
+    
+    - name: Produce markdown file
+      run: pycobertura show ${{github.workspace}}/test/docs/coverage.xml --output ${{github.workspace}}/test/docs/coverage.md
+      shell: bash
+        
     
     # - name: Code Coverage Report
     #   uses: irongut/CodeCoverageSummary@v1.3.0
