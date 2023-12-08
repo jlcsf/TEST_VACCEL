@@ -1,11 +1,9 @@
 name: Coverage
 
 on:
-  workflow_run:
-    workflows: ["CI"]
+  pull_request:
     types:
-      - completed
-
+      - closed
 
   workflow_dispatch:
 
