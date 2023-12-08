@@ -156,6 +156,7 @@ TEST_CASE("exec_helpers")
 			break;
 		}
 	}
+}
     
 // close_session:
 	
