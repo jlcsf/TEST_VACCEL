@@ -148,7 +148,7 @@ TEST_CASE("exec_helpers")
 
 
 	for (int i = 0; i < atoi(iterations); ++i) {
-		ret = vaccel_exec(&sess, "../plugins/noop/libvaccel-noop.so",
+		ret = vaccel_exec(&sess, "../examples/libmytestlib.so",
 				"mytestfunc_both", read->list, read->size, write->list, write->size);
 		REQUIRE(ret == VACCEL_OK);
 	}
