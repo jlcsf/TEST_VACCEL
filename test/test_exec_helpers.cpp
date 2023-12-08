@@ -150,11 +150,7 @@ TEST_CASE("exec_helpers")
 	for (int i = 0; i < atoi(iterations); ++i) {
 		ret = vaccel_exec(&sess, "../plugins/noop/libvaccel-noop.so",
 				"mytestfunc_both", read->list, read->size, write->list, write->size);
-
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			break;
-		}
+		REQUIRE(ret == VACCEL_OK);
 	}
 }
     
