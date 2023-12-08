@@ -33,12 +33,6 @@ jobs:
         make
         make test ARGS="-V"
         cd ../
-
-    - name: Copy coverage data
-      run: |
-        echo "Copying files to build/coverage_data:"
-        find build -type f -name "*.gcda" -exec cp {} build/coverage_data/ \;
-        find build -type f -name "*.gcno" -exec cp {} build/coverage_data/ \;
   
     - name: Generate coverage report
       run: |
@@ -54,4 +48,5 @@ jobs:
       run: |
           git add coverage.html
           git commit -m "Update coverage report"
-          git push origin HEAD:${{ github.ref }}
+          echo "::set-output name=branch::$(echo $GITHUB_REF | sed 's/refs\/heads\///')"
+          git push origin HEAD:${{ steps.branch.outputs.branch }}
