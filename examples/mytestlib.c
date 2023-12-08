@@ -52,7 +52,7 @@ vaccel_write_ser_arg(struct vaccel_arg* args, int idx, void* buf)
 static void* vaccel_extract_deser_arg(
     struct vaccel_arg* args, 
     int idx, 
-    void* (*deserializer(void*, uint32_t)))
+    void* (*deserializer)(void*, uint32_t))
 {
     return deserializer(args[idx].buf, args[idx].size);
 }
@@ -79,7 +79,7 @@ void* ser(void* buf, uint32_t* bytes){
 
 	memcpy(ser_buf, (int*)(&non_ser->size), sizeof(int));
 	
-	for(int i=0; i<non_ser->size; i++)
+	for(int i=0; i<(int)non_ser->size; i++)
 		memcpy(&ser_buf[i+1], &non_ser->array[i], sizeof(int));
 	
 
@@ -89,6 +89,7 @@ void* ser(void* buf, uint32_t* bytes){
 
 
 void* deser(void* buf, uint32_t bytes){
+	printf("Bytes: %d\n", (int)bytes);
 	int *ser_buf = (int*)buf;
 	int size = ser_buf[0];
 
@@ -138,7 +139,7 @@ int mytestfunc_nonser(struct vaccel_arg *input, size_t nr_in,
 	memcpy(numbuf, input_data->array, input_data->size * sizeof(int));
 
 	// Reverse the numbers
-	for(int i=0; i<input_data->size; i++){
+	for(int i=0; i<(int)input_data->size; i++){
 		input_data->array[i] = numbuf[input_data->size - i - 1];
 	}
 
@@ -169,7 +170,7 @@ int mytestfunc_both(struct vaccel_arg *input, size_t nr_in,
 	memcpy(numbuf, input_data->array, input_data->size * sizeof(int));
 
 	// Reverse the numbers
-	for(int i=0; i<input_data->size; i++){
+	for(int i=0; i<(int)input_data->size; i++){
 		input_data->array[i] = numbuf[input_data->size - i - 1];
 	}
 
