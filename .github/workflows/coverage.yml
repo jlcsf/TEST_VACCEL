@@ -48,5 +48,5 @@ jobs:
       run: |
           git add coverage.html
           git commit -m "Update coverage report"
-          echo "::set-output name=branch::$(echo $GITHUB_REF | sed 's/refs\/heads\///')"
-          git push origin HEAD:${{ steps.branch.outputs.branch }}
+          echo "BRANCH_NAME=$(echo $GITHUB_REF | sed 's/refs\/heads\///')" >> $GITHUB_ENV
+          git push origin HEAD:$BRANCH_NAME
