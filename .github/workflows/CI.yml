@@ -53,7 +53,7 @@ jobs:
         cd build_${{matrix.build_type}}
         cmake ${{github.workspace}} \
           -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/artifacts/${{matrix.archconfig}}/${{matrix.build_type}}/opt \
-          -DBUILD_PLUGIN_NOOP=ON && \
+          -DBUILD_PLUGIN_NOOP=ON -DBUILD_PLUGIN_EXEC=ON && \
         make -C plugins && make install -C plugins
 
     - name: Run examples
