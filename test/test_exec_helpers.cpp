@@ -165,7 +165,7 @@ TEST_CASE("exec_helpers")
     // check vaccel_extract_deser_arg() and non-ser response correnctness
     struct mydata* out_mydata;
     out_mydata = (struct mydata*)vaccel_extract_deser_arg(write->list, 1, deser);
-    REQUIRE(out->data != NULL);
+    REQUIRE(out_mydata != NULL);
     
     REQUIRE(out_mydata->size == 5);
     REQUIRE(out_mydata->array != NULL);
