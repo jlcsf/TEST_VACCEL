@@ -154,11 +154,7 @@ TEST_CASE("exec_helpers")
 	}
 
     
-// close_session:
-	
-     //REQUIRE(ret == VACCEL_OK);
-
-//     // check integer-output correctness
+    // check integer-output correctness
     REQUIRE(output_int == 20);
     
     // check vaccel_extract_ser_arg()

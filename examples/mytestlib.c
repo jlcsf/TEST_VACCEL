@@ -153,7 +153,6 @@ int mytestfunc_nonser(struct vaccel_arg *input, size_t nr_in,
 int mytestfunc_both(struct vaccel_arg *input, size_t nr_in,
 	       struct vaccel_arg *output, size_t nr_out)
 {
-	printf("\n\nmytestfunc_both executed\n\n\n");
 	assert(nr_in >= 1);
 	assert(nr_out >= 1);
 	printf("I got nr_in: %ld, nr_out: %ld\n", nr_in, nr_out);
@@ -176,7 +175,7 @@ int mytestfunc_both(struct vaccel_arg *input, size_t nr_in,
 	}
 
 	// Output 1
-	int output_int = *input_int * 2;
+	int output_int = (*input_int) * 2;
 	vaccel_write_ser_arg(output, 0, &output_int);
 
 	// Output 2
