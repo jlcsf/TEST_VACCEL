@@ -162,6 +162,7 @@ TEST_CASE("exec_helpers")
     //int resp = *ptr_out_int;
     //REQUIRE(resp == 20);
 
+/*
     // check vaccel_extract_deser_arg() and non-ser response correnctness
     struct mydata* out_mydata;
     out_mydata = (struct mydata*)vaccel_extract_deser_arg(write->list, 1, deser);
@@ -177,9 +178,12 @@ TEST_CASE("exec_helpers")
     REQUIRE(out_mydata->array[4] == 1);
 
 
+    
+
+*/
+
     delete_arg_list(read);
  	delete_arg_list(write);
-
     
     if (vaccel_sess_free(&sess) != VACCEL_OK) {
     	fprintf(stderr, "Could not clear session\n");

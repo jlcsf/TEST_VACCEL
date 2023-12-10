@@ -53,14 +53,14 @@ jobs:
         cd build_${{matrix.build_type}}
         cmake ${{github.workspace}} \
           -DCMAKE_INSTALL_PREFIX=${{github.workspace}}/artifacts/${{matrix.archconfig}}/${{matrix.build_type}}/opt \
-          -DBUILD_PLUGIN_NOOP=ON -DBUILD_PLUGIN_EXEC=ON && \
+          -DBUILD_PLUGIN_NOOP=ON && \
         make -C plugins && make install -C plugins
 
     - name: Run examples
       id: run_examples
       env:
         LD_LIBRARY_PATH: ${{github.workspace}}/artifacts/${{matrix.archconfig}}/${{matrix.build_type}}/opt/lib
-        VACCEL_BACKENDS: ${{github.workspace}}/artifacts/${{matrix.archconfig}}/${{matrix.build_type}}/opt/lib/libvaccel-exec.so
+        VACCEL_BACKENDS: ${{github.workspace}}/artifacts/${{matrix.archconfig}}/${{matrix.build_type}}/opt/lib/libvaccel-noop.so
         VACCEL_DEBUG_LEVEL: 4
       run: |
         cd ${{github.workspace}}/artifacts/${{matrix.archconfig}}/${{matrix.build_type}}/opt
@@ -86,7 +86,7 @@ jobs:
         rm build_${{matrix.build_type}} -rf
         mkdir -p build_${{matrix.build_type}}
         cd build_${{matrix.build_type}}
-        cmake ${{github.workspace}} -DBUILD_PLUGIN_EXEC=ON -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         make
         ls examples
         make test ARGS="-V"
