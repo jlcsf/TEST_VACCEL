@@ -166,7 +166,7 @@ TEST_CASE("exec_helpers")
     // vaccel_extract_ser_arg() Testing
     int *expected_val =
         (int*)vaccel_extract_ser_arg(read->list, 0);
-    REQUIRE(*expected_val != NULL);
+    REQUIRE(expected_val != NULL);
     REQUIRE(*expected_val == 10);
      
     
@@ -192,8 +192,8 @@ TEST_CASE("exec_helpers")
 
 
     // vaccel_write_deser_arg() Testing
-    vaccel_write_deser_arg(write->list, 1, mydata_instance, ser);
-    REQUIRE(write->list[1].size == (int)bytes);
+    vaccel_write_deser_arg(write->list, 1, (void*)(&mydata_instance), ser);
+    REQUIRE(write->list[1].size == bytes);
     REQUIRE(strncmp((char*)serbuf, (char*)write->list[1].buf, bytes) == 0);
 
 
