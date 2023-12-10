@@ -63,18 +63,58 @@ void* deser(void* buf, uint32_t bytes){
 	return new_buf;
 }
 
+   /*
+    *
+    * The code below performs Unit Testing to vaccel arguments 
+    * helpers. More specifally, the functions that are getting 
+    * tested are:
+    * 
+    * 1) vaccel_args_init()
+    * 2) delete_arg_list()
+    *   
+    *   -which are related to initialization and deletion of the 
+    *   -argument list in main program.
+    * 
+    * 3) vaccel_add_ser_arg()
+    * 4) vaccel_add_deser_arg()
+    *   
+    *   -which are the functions which the user might use to add an
+    *   -argument in an arg-list (in main program).
+    * 
+    * 5) vaccel_expect_ser_arg()
+    * 6) vaccel_expect_deser_ser_arg()
+    * 
+    *   -which are used to define the type of the argument/s that
+    *   -you 'expect' to receive by the plugin (used in main program)
+    * 
+    * 7) vaccel_extract_ser_arg()
+    * 8) vaccel_extract_deser_arg()
+    * 
+    *   -which are used to extract an argument that was packed in an
+    *   -arg-list (used both in main program and plugin)
+    * 
+    * 9)  vaccel_write_ser_arg()
+    * 10) vaccel_write_deser_arg() 
+    * 
+    *   -which are used to write to an already-defined argument
+    *   -(used in plugin)
+    *  
+    */
+
 
 TEST_CASE("exec_helpers")
 {
-    int ret;
-	struct vaccel_session sess;
-    
-    sess.hint = VACCEL_PLUGIN_DEBUG;
-    char iterations[] = "1";
-    
-    ret = vaccel_sess_init(&sess, sess.hint);
-    REQUIRE(ret == VACCEL_OK);
+    struct mydata mydata_instance;
+    mydata_instance.size = 5;
+	mydata_instance.array = (int*)malloc(5*sizeof(int));
+	for(int i=0; i<5; i++)
+        mydata_instance.array[i] = i+1;
+	
+    uint32_t bytes;
+    void* serbuf = ser(&mydata_instance, &bytes);
 
+
+    // vaccel_args_init() Testing
     struct vaccel_arg_list *read, *write;
 
     read = vaccel_args_init();
@@ -87,20 +127,8 @@ TEST_CASE("exec_helpers")
     REQUIRE(write->size == 0);
     REQUIRE(write->list != NULL);
     
-    /*
-    *
-    * 'read' will contain two arguments, one serialised and
-    * one non-serialised. The first argument will be an integer,
-    * while the second will be an instance of 'struct mydata'.
-    * 
-    * On the other side, 'write' will also contain two arguments 
-    * after calling vaccel_exec(). The arguements will be the same 
-    * as before; one integer and one instance of'struct mydata'. 
-    *
-    */
-
-
-    // Check vaccel_add_ser_arg()
+   
+    // vaccel_add_ser_arg() Testing
     int input_int = 10;
     vaccel_add_ser_arg(read, &input_int, sizeof(int));
     REQUIRE(read->size == 1);
@@ -108,36 +136,18 @@ TEST_CASE("exec_helpers")
     REQUIRE(read->list[0].argtype == 0);
     REQUIRE(read->list[0].buf == &input_int);
 
-    // Check vaccel_add_deser_arg
-    struct mydata input_data;
-    input_data.size = 5;
-	input_data.array = (int*)malloc(5*sizeof(int));
-	for(int i=0; i<5; i++)
-        input_data.array[i] = i+1;
-	
-    uint32_t bytes;
-    void* serbuf = ser(&input_data, &bytes);
-    //free(serbuf);
 
-	vaccel_add_deser_arg(read, &input_data, 0, ser);
+    // vaccel_add_deser_arg() Testing
+	vaccel_add_deser_arg(read, &mydata_instance, 0, ser);
     REQUIRE(read->size == 2);
     REQUIRE(read->list[1].size == bytes);
     REQUIRE(read->list[1].argtype == 0);
     REQUIRE(read->list[1].buf != NULL);
     REQUIRE(strncmp((char*)serbuf, (char*)read->list[1].buf, bytes) == 0);
+    
 
-    /*
-    * What we expect by the plugin to do, is returning 
-    * an integer, that is, 'input_int' multiplied by 2, and
-    * also an instance of 'struct mydata' with the same size, 
-    * but the number that were previously given are now reversed.
-    * 
-    * e.g. 
-    * integer: 10 -> 20
-    * 'struct mydata': 1 2 3 4 5 -> 5 4 3 2 1
-    * 
-    */
 
+    // vaccel_expect_ser_arg() Testing
     int output_int;
     vaccel_expect_ser_arg(write, &output_int, sizeof(int));
     REQUIRE(write->size == 1);
@@ -145,54 +155,51 @@ TEST_CASE("exec_helpers")
     REQUIRE(write->list[0].argtype == 0);
     REQUIRE(write->list[0].buf == &output_int);
 
+
+    // vaccel_expect_deser_arg() Testing
     vaccel_expect_deser_arg(write);
     REQUIRE(write->size == 2);
     REQUIRE(write->list[1].size == 0);
     REQUIRE(write->list[1].argtype == 0);
 
 
-	for (int i = 0; i < atoi(iterations); ++i) {
-		ret = vaccel_exec(&sess, "../examples/libmytestlib.so",
-				"mytestfunc_both", read->list, read->size, write->list, write->size);
-		REQUIRE(ret == VACCEL_OK);
-	}
-
+    // vaccel_extract_ser_arg() Testing
+    int *expected_val =
+        (int*)vaccel_extract_ser_arg(read->list, 0);
+    REQUIRE(*expected_val != NULL);
+    REQUIRE(*expected_val == 10);
+     
     
-    // check integer-output correctness
-    //REQUIRE(output_int == 20);
-    
-    // check vaccel_extract_ser_arg()
-    //int* ptr_out_int = (int*)vaccel_extract_ser_arg(write->list, 0);
-    //int resp = *ptr_out_int;
-    //REQUIRE(resp == 20);
+    // vaccel_extract_desser_arg() Testing
+    struct mydata* extracted_mydata;
+    extracted_mydata = 
+        (struct mydata*)vaccel_extract_deser_arg(read->list, 1, deser);
+    REQUIRE(extracted_mydata != NULL);
+    REQUIRE(extracted_mydata->size == 5);
+    REQUIRE(extracted_mydata->array != NULL);
 
-/*
-    // check vaccel_extract_deser_arg() and non-ser response correnctness
-    struct mydata* out_mydata;
-    out_mydata = (struct mydata*)vaccel_extract_deser_arg(write->list, 1, deser);
-    REQUIRE(out_mydata != NULL);
-    
-    REQUIRE(out_mydata->size == 5);
-    REQUIRE(out_mydata->array != NULL);
-
-    REQUIRE(out_mydata->array[0] == 5);
-    REQUIRE(out_mydata->array[1] == 4);
-    REQUIRE(out_mydata->array[2] == 3);
-    REQUIRE(out_mydata->array[3] == 2);
-    REQUIRE(out_mydata->array[4] == 1);
+    REQUIRE(extracted_mydata->array[0] == 1);
+    REQUIRE(extracted_mydata->array[1] == 2);
+    REQUIRE(extracted_mydata->array[2] == 3);
+    REQUIRE(extracted_mydata->array[3] == 4);
+    REQUIRE(extracted_mydata->array[4] == 5);
 
 
-    
+    // vaccel_write_ser_arg() Testing
+    int write_arg_int = 20;
+	vaccel_write_ser_arg(write->list, 0, &write_arg_int);
+    REQUIRE(*((int*)write->list[0].buf) == write_arg_int);
 
-*/
 
+    // vaccel_write_deser_arg() Testing
+    vaccel_write_deser_arg(write->list, 1, mydata_instance, ser);
+    REQUIRE(write->list[1].size == (int)bytes);
+    REQUIRE(strncmp((char*)serbuf, (char*)write->list[1].buf, bytes) == 0);
+
+
+    // Free the memory space
     delete_arg_list(read);
  	delete_arg_list(write);
 
-    if (vaccel_sess_free(&sess) != VACCEL_OK) {
-    	fprintf(stderr, "Could not clear session\n");
- 		printf("%d\n", 1);
- 	}
-
- 	printf("%d\n", ret);
+    free(serbuf);
 }
