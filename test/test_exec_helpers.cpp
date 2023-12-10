@@ -21,7 +21,7 @@ extern "C"
 #include "shared_object.h"
 
 #include "../src/vaccel_args.h"
-
+#include <string.h>
 }
 
 struct mydata
@@ -99,6 +99,8 @@ TEST_CASE("exec_helpers")
     *
     */
 
+
+    // Check vaccel_add_ser_arg()
     int input_int = 10;
     vaccel_add_ser_arg(read, &input_int, sizeof(int));
     REQUIRE(read->size == 1);
@@ -106,6 +108,7 @@ TEST_CASE("exec_helpers")
     REQUIRE(read->list[0].argtype == 0);
     REQUIRE(read->list[0].buf == &input_int);
 
+    // Check vaccel_add_deser_arg
     struct mydata input_data;
     input_data.size = 5;
 	input_data.array = (int*)malloc(5*sizeof(int));
@@ -114,13 +117,14 @@ TEST_CASE("exec_helpers")
 	
     uint32_t bytes;
     void* serbuf = ser(&input_data, &bytes);
-    free(serbuf);
+    //free(serbuf);
 
 	vaccel_add_deser_arg(read, &input_data, 0, ser);
     REQUIRE(read->size == 2);
     REQUIRE(read->list[1].size == bytes);
     REQUIRE(read->list[1].argtype == 0);
     REQUIRE(read->list[1].buf != NULL);
+    REQUIRE(strncmp((char*)serbuf, (char*)read->list[1].buf, bytes) == 0);
 
     /*
     * What we expect by the plugin to do, is returning 
@@ -184,7 +188,7 @@ TEST_CASE("exec_helpers")
 
     delete_arg_list(read);
  	delete_arg_list(write);
-    
+
     if (vaccel_sess_free(&sess) != VACCEL_OK) {
     	fprintf(stderr, "Could not clear session\n");
  		printf("%d\n", 1);
