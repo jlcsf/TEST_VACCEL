@@ -63,6 +63,8 @@ set(TESTS_API
     test_minmax
     test_noop
     test_blas
+    test_arg_helpers
+    test_arg_helpers_example
 )
 
 foreach(TEST_NAME ${TESTS_CORE})
@@ -83,11 +85,19 @@ set_tests_properties(
 )
 
 set_tests_properties(
-    test_image test_tf_interference test_tf_model test_tf_saved_model test_exec test_minmax test_noop test_blas test_fpga
+    test_image test_tf_interference test_tf_model test_tf_saved_model test_exec test_minmax test_noop test_blas test_fpga test_arg_helpers test_arg_helpers_example
     PROPERTIES
     ENVIRONMENT "VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/noop/libvaccel-noop.so"
     ARGS=--order rand --warn NoAssertions
 )
+
+#set_tests_properties(
+#    test_exec_example
+#    PROPERTIES
+#    ENVIRONMENT "VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/exec/libvaccel-exec.so"
+#    ARGS=--order rand --warn NoAssertions
+#)
+
 
 set_tests_properties(
     test_example test_log test_id_pool test_misc test_resource test_session test_plugin
