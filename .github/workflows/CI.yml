@@ -67,6 +67,27 @@ jobs:
         sudo mkdir -p /run/user/1001
         sudo chown -R runner /run/user/1001
         ls bin
+        ./bin/classify share/images/example.jpg 1
+        ./bin/classify_generic share/images/example.jpg 1
+        ./bin/detect share/images/example.jpg 1
+        ./bin/detect_generic share/images/example.jpg 1
+        ./bin/pose share/images/example.jpg 1
+        ./bin/pose_generic share/images/example.jpg 1
+        ./bin/segment share/images/example.jpg 1
+        ./bin/segment_generic share/images/example.jpg 1
+        ./bin/depth share/images/example.jpg 1
+        ./bin/depth_generic share/images/example.jpg 1
+        ./bin/sgemm
+        ./bin/sgemm_generic
+        ./bin/minmax 262144 ./share/input/input_262144.csv 5 100
+        ./bin/minmax_generic 262144 ./share/input/input_262144.csv 5 100
+        ./bin/pynq_vector_add
+        ./bin/pynq_array_copy
+        ./bin/pynq_parallel
+        ./bin/torch_inference ./share/images/example.jpg ./share/models/torch
+        ./bin/tf_model share/models/tf/frozen_graph.pb
+        ./bin/tf_saved_model share/models/tf/lstm2
+        ./bin/tf_inference share/models/tf/lstm2
         ./bin/exec_helpers 1
     
     - name: Set up dir for armv7l
