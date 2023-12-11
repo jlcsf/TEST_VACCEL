@@ -1,3 +1,17 @@
+/*
+ * Unit Testing for VAccel Image operations
+ *
+ * The code below performs unit testing for various VAccel image processing
+ * operations. It includes test cases for image classification, depth
+ * estimation, object detection, pose estimation, image segmentation, and their
+ * generic counterparts.
+ *
+ * Each test case initializes a VAccel session, reads an image file, and
+ * performs the specified image processing operation in a loop. The results are
+ * printed to the console. The test cases also handle memory allocation, error
+ * checking, and session cleanup.
+ */
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <atomic>
@@ -5,22 +19,22 @@
 using atomic_int = std::atomic<int>;
 using atomic_uint = std::atomic<unsigned int>;
 
-extern "C"{
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+extern "C" {
 #include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
-#include <vaccel.h>
 #include "session.h"
+#include <vaccel.h>
 }
 
+extern "C" {
 
-extern "C"{
-
-int read_file(const char *filename, char **img, size_t *img_size) {
+int read_file(const char* filename, char** img, size_t* img_size)
+{
     int fd;
     long bytes = 0;
 
@@ -34,7 +48,7 @@ int read_file(const char *filename, char **img, size_t *img_size) {
     fstat(fd, &info);
     fprintf(stdout, "Image size: %luB\n", info.st_size);
 
-    char *buf = (char *)malloc(info.st_size);
+    char* buf = (char*)malloc(info.st_size);
     if (!buf) {
         fprintf(stderr, "Could not allocate memory for image\n");
         goto free_buff;
@@ -66,21 +80,19 @@ free_buff:
     free(buf);
     return 1;
 }
-
 }
 TEST_CASE("classify")
-{   
+{
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_text[512], out_imagename[512];
-	struct vaccel_session sess;
-
+    char out_text[512], out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
 
@@ -90,46 +102,42 @@ TEST_CASE("classify")
 
     REQUIRE(ret == 0);
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_image_classification(&sess, image, (unsigned char*)out_text, (unsigned char*)out_imagename,
-				image_size, sizeof(out_text), sizeof(out_imagename));
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_image_classification(
+            &sess, image, (unsigned char*)out_text, (unsigned char*)out_imagename,
+            image_size, sizeof(out_text), sizeof(out_imagename));
 
-        if (ret){
+        if (ret) {
             fprintf(stderr, "Could not run op: %d\n", ret);
             goto close_session;
         }
 
         if (i == 0)
-                printf("classification tags: %s\n", out_text);
-
+            printf("classification tags: %s\n", out_text);
     }
 
-
 close_session:
-        free(image);
-        if (vaccel_sess_free(&sess) != VACCEL_OK) {
-            fprintf(stderr, "Could not clear session\n");
-            printf("%d\n", 1);
-	    }
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	    printf("%d\n", ret);
+    printf("%d\n", ret);
 }
 
-
-
 TEST_CASE("classify_generic")
-{   
+{
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_text[512], out_imagename[512];
-	struct vaccel_session sess;
-
+    char out_text[512], out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
 
@@ -143,38 +151,39 @@ TEST_CASE("classify_generic")
     if (image_size <= UINT32_MAX) {
         image_size_uint32 = static_cast<uint32_t>(image_size);
     } else {
-        REQUIRE(1==2); // lets fail the test here
+        REQUIRE(1 == 2); // lets fail the test here
     }
 
     enum vaccel_op_type op_type = VACCEL_IMG_CLASS;
     struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }};
+        { .size = sizeof(enum vaccel_op_type), .buf = &op_type },
+        { .size = image_size_uint32, .buf = image }
+    };
 
     struct vaccel_arg write[2] = {
-		{ .size = sizeof(out_text), .buf = out_text },
-		{ .size = sizeof(out_imagename), .buf = out_imagename }};
+        { .size = sizeof(out_text), .buf = out_text },
+        { .size = sizeof(out_imagename), .buf = out_imagename }
+    };
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_genop(&sess, read, 2, write, 2);
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_genop(&sess, read, 2, write, 2);
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
 
-		if (i == 0)
-			printf("classification tags: %s\n", out_text);
-	}
-
+        if (i == 0)
+            printf("classification tags: %s\n", out_text);
+    }
 
 close_session:
-        free(image);
-        if (vaccel_sess_free(&sess) != VACCEL_OK) {
-            fprintf(stderr, "Could not clear session\n");
-            printf("%d\n", 1);
-	    }
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	    printf("%d\n", ret);
+    printf("%d\n", ret);
 }
 
 TEST_CASE("depth")
@@ -182,13 +191,13 @@ TEST_CASE("depth")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -197,42 +206,40 @@ TEST_CASE("depth")
     REQUIRE(ret == VACCEL_OK);
 
     for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_image_depth(&sess, image, (unsigned char*)out_imagename,
-				image_size, sizeof(out_imagename));
+        ret = vaccel_image_depth(&sess, image, (unsigned char*)out_imagename,
+            image_size, sizeof(out_imagename));
 
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
 
-		if (i == 0)
-			printf("depth estimation imagename: %s\n", out_imagename);
-	}
-
+        if (i == 0)
+            printf("depth estimation imagename: %s\n", out_imagename);
+    }
 
 close_session:
-	free(image);
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	printf("%d\n", ret);
-
+    printf("%d\n", ret);
 }
 
 TEST_CASE("depth_generic")
-{   
+{
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
-	int ret;
-	char *image;
+    int ret;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -244,50 +251,50 @@ TEST_CASE("depth_generic")
     if (image_size <= UINT32_MAX) {
         image_size_uint32 = static_cast<uint32_t>(image_size);
     } else {
-        REQUIRE(1==2); // lets fail the test here
+        REQUIRE(1 == 2); // lets fail the test here
     }
 
     enum vaccel_op_type op_type = VACCEL_IMG_DEPTH;
     struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }};
+        { .size = sizeof(enum vaccel_op_type), .buf = &op_type },
+        { .size = image_size_uint32, .buf = image }
+    };
 
-	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename }};
+    struct vaccel_arg write[1] = {
+        { .size = sizeof(out_imagename), .buf = out_imagename }
+    };
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_genop(&sess, read, 2, write, 1);
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_genop(&sess, read, 2, write, 1);
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
         }
-	}
-
+    }
 
 close_session:
-        free(image);
-        if (vaccel_sess_free(&sess) != VACCEL_OK) {
-            fprintf(stderr, "Could not clear session\n");
-            printf("%d\n", 1);
-	    }
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	    printf("%d\n", ret);
+    printf("%d\n", ret);
 }
-
 
 TEST_CASE("detect")
 {
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -295,44 +302,42 @@ TEST_CASE("detect")
     ret = read_file(argv[1], &image, &image_size);
     REQUIRE(ret == VACCEL_OK);
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_image_detection(&sess, image, (unsigned char*)out_imagename,
-				image_size, sizeof(out_imagename));
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_image_detection(&sess, image, (unsigned char*)out_imagename,
+            image_size, sizeof(out_imagename));
 
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
 
-		if (i == 0)
-			printf("detection imagename: %s\n", out_imagename);
-	}
+        if (i == 0)
+            printf("detection imagename: %s\n", out_imagename);
+    }
 
 close_session:
-	free(image);
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	printf("%d\n", ret);
-
+    printf("%d\n", ret);
 }
-
 
 TEST_CASE("detect_generic")
 {
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -344,35 +349,34 @@ TEST_CASE("detect_generic")
     if (image_size <= UINT32_MAX) {
         image_size_uint32 = static_cast<uint32_t>(image_size);
     } else {
-        REQUIRE(1==2); // lets fail the test here
+        REQUIRE(1 == 2); // lets fail the test here
     }
 
-	enum vaccel_op_type op_type = VACCEL_IMG_DETEC;
-	struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }
-	};
-	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename },
-	};
+    enum vaccel_op_type op_type = VACCEL_IMG_DETEC;
+    struct vaccel_arg read[2] = {
+        { .size = sizeof(enum vaccel_op_type), .buf = &op_type },
+        { .size = image_size_uint32, .buf = image }
+    };
+    struct vaccel_arg write[1] = {
+        { .size = sizeof(out_imagename), .buf = out_imagename },
+    };
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_genop(&sess, read, 2, write, 1);
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
-	}
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_genop(&sess, read, 2, write, 1);
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
+    }
 
 close_session:
-	free(image);
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	printf("%d\n", ret);
-
+    printf("%d\n", ret);
 }
 
 TEST_CASE("pose")
@@ -380,14 +384,14 @@ TEST_CASE("pose")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -395,44 +399,42 @@ TEST_CASE("pose")
     ret = read_file(argv[1], &image, &image_size);
     REQUIRE(ret == VACCEL_OK);
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_image_pose(&sess, image, (unsigned char*)out_imagename,
-				image_size, sizeof(out_imagename));
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_image_pose(&sess, image, (unsigned char*)out_imagename,
+            image_size, sizeof(out_imagename));
 
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
 
-		if (i == 0)
-			printf("pose estimation imagename: %s\n", out_imagename);
+        if (i == 0)
+            printf("pose estimation imagename: %s\n", out_imagename);
     }
 
 close_session:
-	free(image);
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	printf("%d\n", ret);
-
+    printf("%d\n", ret);
 }
-
 
 TEST_CASE("pose_generic")
 {
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -444,51 +446,49 @@ TEST_CASE("pose_generic")
     if (image_size <= UINT32_MAX) {
         image_size_uint32 = static_cast<uint32_t>(image_size);
     } else {
-        REQUIRE(1==2); // lets fail the test here
+        REQUIRE(1 == 2); // lets fail the test here
     }
 
-	enum vaccel_op_type op_type = VACCEL_IMG_POSE;
-	struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }
-	};
-	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename },
-	};
+    enum vaccel_op_type op_type = VACCEL_IMG_POSE;
+    struct vaccel_arg read[2] = {
+        { .size = sizeof(enum vaccel_op_type), .buf = &op_type },
+        { .size = image_size_uint32, .buf = image }
+    };
+    struct vaccel_arg write[1] = {
+        { .size = sizeof(out_imagename), .buf = out_imagename },
+    };
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_genop(&sess, read, 2, write, 1);
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
-	}
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_genop(&sess, read, 2, write, 1);
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
+    }
 
 close_session:
-	free(image);
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	printf("%d\n", ret);
-
+    printf("%d\n", ret);
 }
-
 
 TEST_CASE("segmentation")
 {
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -496,44 +496,42 @@ TEST_CASE("segmentation")
     ret = read_file(argv[1], &image, &image_size);
     REQUIRE(ret == VACCEL_OK);
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_image_segmentation(&sess, image, (unsigned char*)out_imagename,
-				image_size, sizeof(out_imagename));
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_image_segmentation(&sess, image, (unsigned char*)out_imagename,
+            image_size, sizeof(out_imagename));
 
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
 
-		if (i == 0)
-			printf("pose estimation imagename: %s\n", out_imagename);
+        if (i == 0)
+            printf("pose estimation imagename: %s\n", out_imagename);
     }
 
 close_session:
-	free(image);
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	printf("%d\n", ret);
-
+    printf("%d\n", ret);
 }
-
 
 TEST_CASE("segmentation_generic")
 {
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
-    char *argv[] = {program_name, file_path, iterations};
+    char iterations[] = "1";
+    char* argv[] = { program_name, file_path, iterations };
 
     int ret;
-	char *image;
+    char* image;
     size_t image_size;
-	char out_imagename[512];
-	struct vaccel_session sess;
+    char out_imagename[512];
+    struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -545,33 +543,32 @@ TEST_CASE("segmentation_generic")
     if (image_size <= UINT32_MAX) {
         image_size_uint32 = static_cast<uint32_t>(image_size);
     } else {
-        REQUIRE(1==2); // lets fail the test here
+        REQUIRE(1 == 2); // lets fail the test here
     }
 
-	enum vaccel_op_type op_type = VACCEL_IMG_SEGME;
-	struct vaccel_arg read[2] = {
-		{ .size = sizeof(enum vaccel_op_type), .buf = &op_type},
-		{ .size = image_size_uint32, .buf = image }
-	};
-	struct vaccel_arg write[1] = {
-		{ .size = sizeof(out_imagename), .buf = out_imagename },
-	};
+    enum vaccel_op_type op_type = VACCEL_IMG_SEGME;
+    struct vaccel_arg read[2] = {
+        { .size = sizeof(enum vaccel_op_type), .buf = &op_type },
+        { .size = image_size_uint32, .buf = image }
+    };
+    struct vaccel_arg write[1] = {
+        { .size = sizeof(out_imagename), .buf = out_imagename },
+    };
 
-	for (int i = 0; i < atoi(argv[2]); ++i) {
-		ret = vaccel_genop(&sess, read, 2, write, 1);
-		if (ret) {
-			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
-		}
-	}
+    for (int i = 0; i < atoi(argv[2]); ++i) {
+        ret = vaccel_genop(&sess, read, 2, write, 1);
+        if (ret) {
+            fprintf(stderr, "Could not run op: %d\n", ret);
+            goto close_session;
+        }
+    }
 
 close_session:
-	free(image);
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
+    free(image);
+    if (vaccel_sess_free(&sess) != VACCEL_OK) {
+        fprintf(stderr, "Could not clear session\n");
+        printf("%d\n", 1);
+    }
 
-	printf("%d\n", ret);
-
+    printf("%d\n", ret);
 }
