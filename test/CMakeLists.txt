@@ -91,12 +91,12 @@ set_tests_properties(
     ARGS=--order rand --warn NoAssertions
 )
 
-set_tests_properties(
-    test_exec_example
-    PROPERTIES
-    ENVIRONMENT "VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/exec/libvaccel-exec.so"
-    ARGS=--order rand --warn NoAssertions
-)
+#set_tests_properties(
+#    test_exec_example
+#    PROPERTIES
+#    ENVIRONMENT "VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/exec/libvaccel-exec.so"
+#    ARGS=--order rand --warn NoAssertions
+#)
 
 
 set_tests_properties(
