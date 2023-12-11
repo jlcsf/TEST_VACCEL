@@ -36,9 +36,9 @@ TEST_CASE("exec")
     input = 10;	
 
 	struct vaccel_arg read[1] = {
-		{.size = sizeof(input),.buf = &input}};
+		{.argtype=0, .size = sizeof(input),.buf = &input}};
 	struct vaccel_arg write[1] = {
-		{.size = sizeof(out_text),.buf = out_text}};
+		{.argtype=0, .size = sizeof(out_text),.buf = out_text}};
 
 	for (int i = 0; i < atoi(iterations); ++i) {
 		ret = vaccel_exec(&sess, "../plugins/noop/libvaccel-noop.so",
@@ -78,14 +78,14 @@ TEST_CASE("exec_generic")
 
 
 	struct vaccel_arg read[4] = {
-		{.size = sizeof(uint8_t),.buf = &op_type},
-		{.size = sizeof(plugin_path) ,.buf = (void*)plugin_path},
-		{.size = sizeof(function_name), .buf = (void*)function_name },
-		{.size = sizeof(input),.buf = &input}
+		{.argtype=0, .size = sizeof(uint8_t),.buf = &op_type},
+		{.argtype=0, .size = sizeof(plugin_path) ,.buf = (void*)plugin_path},
+		{.argtype=0, .size = sizeof(function_name), .buf = (void*)function_name },
+		{.argtype=0, .size = sizeof(input),.buf = &input}
 	};
 	
     struct vaccel_arg write[1] = {
-		{.size = sizeof(out_text),.buf = out_text},
+		{.argtype=0, .size = sizeof(out_text),.buf = out_text},
 	};
 
 	for (int i = 0; i < atoi(iterations); ++i) {
@@ -195,9 +195,9 @@ TEST_CASE("exec_with_resources")
     
     input = 10;
 	struct vaccel_arg read[1] = {
-		{.size = sizeof(input), .buf = &input}};
+		{.argtype=0, .size = sizeof(input), .buf = &input}};
 	struct vaccel_arg write[1] = {
-		{.size = sizeof(out_text), .buf = out_text},
+		{.argtype=0, .size = sizeof(out_text), .buf = out_text},
 	};
 
 
@@ -213,9 +213,9 @@ TEST_CASE("exec_with_resources")
     REQUIRE(ret == VACCEL_OK);
 
 	struct vaccel_arg read_2[1] = {
-		{.size = sizeof(input), .buf = &input}};
+		{.argtype=0, .size = sizeof(input), .buf = &input}};
 	struct vaccel_arg write_2[1] = {
-		{.size = sizeof(out_text2), .buf = out_text2},
+		{.argtype=0, .size = sizeof(out_text2), .buf = out_text2},
 	};
 
 	for (int i = 0; i < atoi(iterations); ++i)
