@@ -13,7 +13,7 @@ set(COMMON_COMPILE_OPTIONS -Wall -Wextra -g -ggdb --coverage -lgcov)
 
 # Function to simplify adding tests
 function(add_test_target_core TARGET_NAME SOURCE_FILE)
-    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/${SOURCE_FILE})
+    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/unit_tests/${SOURCE_FILE})
     target_include_directories(${TARGET_NAME}
         PRIVATE
             ../third-party/slog/src
@@ -27,7 +27,7 @@ function(add_test_target_core TARGET_NAME SOURCE_FILE)
 endfunction()
 
 function(add_test_target_api TARGET_NAME SOURCE_FILE)
-    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/${SOURCE_FILE})
+    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/operation_tests/${SOURCE_FILE})
     target_include_directories(${TARGET_NAME}
         PRIVATE
             ../third-party/slog/src
@@ -43,7 +43,6 @@ function(add_test_target_api TARGET_NAME SOURCE_FILE)
 endfunction()
 
 set(TESTS_CORE
-    test_example
     test_plugin
     test_session
     test_misc
@@ -76,21 +75,14 @@ endforeach()
 # Set properties for specific tests
 
 set_tests_properties(
-    test_vaccel 
-    PROPERTIES
-    ENVIRONMENT "VACCEL_DEBUG_LEVEL=4;VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/noop/libvaccel-noop.so"
-    ARGS=--order rand --warn NoAssertions
-)
-
-set_tests_properties(
-    test_image test_tf_interference test_tf_model test_tf_saved_model test_exec test_minmax test_noop test_blas test_fpga
+    test_image test_tf_interference test_tf_model test_tf_saved_model test_exec test_minmax test_noop test_blas test_fpga test_vaccel
     PROPERTIES
     ENVIRONMENT "VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/noop/libvaccel-noop.so"
     ARGS=--order rand --warn NoAssertions
 )
 
 set_tests_properties(
-    test_example test_log test_id_pool test_misc test_resource test_session test_plugin
+    test_log test_id_pool test_misc test_resource test_session test_plugin test_vaccel
     PROPERTIES
     ARGS=--order rand --warn NoAssertions
 )
