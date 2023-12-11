@@ -1,14 +1,16 @@
 #include <catch2/catch_test_macros.hpp>
 
 extern "C" {
-#include "plugin.h"
 #include "error.h"
 #include "list.h"
+#include "plugin.h"
 }
 
+#include <dlfcn.h>
 #include <stdbool.h>
 #include <string.h>
-#include <dlfcn.h>
+
+// TODO: Investigate unregister plugin function and freeing memory
 
 // static const char *pname = "mock_plugin_test";
 
@@ -17,7 +19,7 @@ extern "C" {
 // static int fini(void)
 // {
 //     return VACCEL_OK;
-// } 
+// }
 // static int init(void)
 // {
 //     return VACCEL_OK;
@@ -25,7 +27,8 @@ extern "C" {
 
 // static int no_op(){return 2;}
 
-TEST_CASE("get_all_available_functions") {
+TEST_CASE("get_all_available_functions")
+{
 
     // vaccel_plugin no_op_plugin;
     // vaccel_plugin_info noop_pinfo;
