@@ -65,12 +65,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	int *outptr = vaccel_extract_ser_arg(write->list, 0);
 
-	printf("input     : %d\n", input_int);
-	printf("output(2x): %d\n", *outptr);
-
- close_session:
+close_session:
 	delete_arg_list(read);
 	delete_arg_list(write);
 
