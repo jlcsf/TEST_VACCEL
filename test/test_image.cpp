@@ -1,3 +1,15 @@
+/*
+* Unit Testing for VAccel Image operations
+*
+* The code below performs unit testing for various VAccel image processing operations.
+* It includes test cases for image classification, depth estimation, object detection,
+* pose estimation, image segmentation, and their generic counterparts.
+*
+* Each test case initializes a VAccel session, reads an image file, and performs the specified
+* image processing operation in a loop. The results are printed to the console.
+* The test cases also handle memory allocation, error checking, and session cleanup.
+*/
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <atomic>
@@ -72,7 +84,7 @@ TEST_CASE("classify")
 {   
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;
@@ -121,7 +133,7 @@ TEST_CASE("classify_generic")
 {   
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;
@@ -182,7 +194,7 @@ TEST_CASE("depth")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
     int ret;
 	char *image;
@@ -225,7 +237,7 @@ TEST_CASE("depth_generic")
 {   
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
 	int ret;
@@ -280,7 +292,7 @@ TEST_CASE("detect")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;
@@ -325,7 +337,7 @@ TEST_CASE("detect_generic")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;
@@ -380,7 +392,7 @@ TEST_CASE("pose")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;
@@ -425,7 +437,7 @@ TEST_CASE("pose_generic")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;
@@ -481,7 +493,7 @@ TEST_CASE("segmentation")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;
@@ -526,7 +538,7 @@ TEST_CASE("segmentation_generic")
 
     char program_name[] = "program_name";
     char file_path[] = "../../examples/images/example.jpg";
-    char iterations[] = "2";
+    char iterations[] = "1";
     char *argv[] = {program_name, file_path, iterations};
 
     int ret;

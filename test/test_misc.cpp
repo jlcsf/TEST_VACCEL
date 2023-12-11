@@ -7,6 +7,13 @@ extern "C"{
 FAKE_VALUE_FUNC(int, get_available_plugins, enum vaccel_op_type);
 }
 
+/*
+* The code below performs unit testing to misc.
+*
+* 1) vaccel_get_plugins()
+*
+*/
+
 TEST_CASE("vaccel_get_plugins", "[vaccel_get_plugins]")
 {
 

@@ -1,3 +1,11 @@
+/*
+ * TensorFlow Saved Model from Memory Test
+ *
+ * The code below tests the creation and registration of a TensorFlow saved model
+ * from memory. 
+ * 
+ */
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <atomic>

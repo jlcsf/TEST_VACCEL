@@ -1,3 +1,10 @@
+/*
+* Unit Testing example
+*
+* Here is an example for a unit test
+*
+*/
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <cstdint>

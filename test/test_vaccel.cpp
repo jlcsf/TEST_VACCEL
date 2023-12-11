@@ -6,6 +6,7 @@ using atomic_int = std::atomic<int>;
 using atomic_uint = std::atomic<unsigned int>;
 DEFINE_FFF_GLOBALS;
 
+// Include entire vaccel.c file here as many static functions.
 extern "C"{
     /*
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -170,20 +171,29 @@ const char *vaccel_rundir(void)
 }
 
 TEST_CASE("constructor & destructor", "[vaccel]"){
-    int ret = VACCEL_EINVAL;
+	int ret;
+    ret = VACCEL_EINVAL;
     REQUIRE(ret == VACCEL_EINVAL);
-	vaccel_log_init();
+
+	ret = vaccel_log_init();
+	REQUIRE(ret == VACCEL_OK);
+
 	ret = create_vaccel_rundir();
     REQUIRE(ret == VACCEL_OK);
+
 	ret = sessions_bootstrap();
     REQUIRE(ret == VACCEL_OK);
+
 	ret = resources_bootstrap();
 	REQUIRE(ret == VACCEL_OK);
-	plugins_bootstrap();
+
+	ret = plugins_bootstrap();
+	REQUIRE(ret == VACCEL_OK);
+
 	char *plugins = getenv("VACCEL_BACKENDS");
-    
     REQUIRE(plugins);
-	load_backend_plugins(plugins);
+	ret = load_backend_plugins(plugins);
+	// REQUIRE(ret == VACCEL_OK);
 
     // ret = plugins_shutdown();
     // REQUIRE(ret == VACCEL_OK);

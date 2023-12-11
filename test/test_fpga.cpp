@@ -1,3 +1,11 @@
+/*
+* Unit Testing for VAccel FPGA Plugins
+*
+* The code below performs unit testing for VAccel FPGA plugins.
+* It includes test cases for the `vaccel_fpga_add`, `vaccel_fpga_copy`, `vaccel_fpga_mmult`, and `vaccel_fpga_parallel` functions.
+*
+*/
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <atomic>

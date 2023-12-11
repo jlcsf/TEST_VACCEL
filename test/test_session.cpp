@@ -7,7 +7,7 @@ using atomic_int = std::atomic<int>;
 using atomic_uint = std::atomic<unsigned int>;
 
 DEFINE_FFF_GLOBALS;
-extern "C"{
+extern "C" {
 
 #include "session.h"
 #include "plugin.h"
@@ -28,6 +28,23 @@ FAKE_VALUE_FUNC(struct vaccel_session*, sess_free);
 
 #define MAX_VACCEL_SESSIONS 1024
 
+/*
+* The code below performs unit testing to sessions.
+*
+* 1) sessions_bootstrap()
+* 2) vaccel_sess_init()
+* 3) vaccel_sess_update()
+* 4) vaccel_sess_free()
+* 5) vaccel_sess_unregister()
+* 6) vaccel_sess_register()
+* 7) vaccel_sess_has_resource)()
+* 8) session_cleanup()
+*
+*/
+
+
+
+// Mock functions for session initialization and cleanup
 int mock_sess_init(vaccel_session* sess, uint32_t flags) {
     (void)sess;
     (void)flags;
@@ -45,26 +62,29 @@ int mock_sess_free(vaccel_session* sess) {
     return 0;
 }
 
-int mock_sess_register(uint32_t sess_id, vaccel_id_t resource_id){
-    (void) sess_id;
-    (void) resource_id;
+int mock_sess_register(uint32_t sess_id, vaccel_id_t resource_id) {
+    (void)sess_id;
+    (void)resource_id;
     return 0;
 }
 
-int mock_sess_unregister(uint32_t sess_id, vaccel_id_t resource_id){
-    (void) sess_id;
-    (void) resource_id;
+int mock_sess_unregister(uint32_t sess_id, vaccel_id_t resource_id) {
+    (void)sess_id;
+    (void)resource_id;
     return 0;
 }
 
-TEST_CASE("session_init", "[session]")
-{   
+// Test case for session initialization
+TEST_CASE("session_init", "[session]") {
     int ret;
+    // Ensure that the session system is initialized
     sessions_bootstrap();
     struct vaccel_session sess;
 
-    ret = vaccel_sess_init(NULL,1);
+    // Test handling of null session
+    ret = vaccel_sess_init(NULL, 1);
     REQUIRE(ret == VACCEL_EINVAL);
+
 
     // SECTION("sessions not init")
     // {
@@ -74,25 +94,25 @@ TEST_CASE("session_init", "[session]")
     //     sessions_bootstrap(); /// ?
     // }
 
-    ret = vaccel_sess_init(&sess,1);
+    // Test session initialization and cleanup
+    ret = vaccel_sess_init(&sess, 1);
     REQUIRE(ret == VACCEL_OK);
-
     REQUIRE(vaccel_sess_free(&sess) == VACCEL_OK);
-    
+
     // sessions_cleanup();
 }
 
-TEST_CASE("vaccel_sess_update_and_free", "[session]")
-{
+// Test case for session update and cleanup
+TEST_CASE("vaccel_sess_update_and_free", "[session]") {
     // sessions_bootstrap();
     struct vaccel_session sess;
     struct vaccel_resource res;
 
-
     res.type = VACCEL_RES_CAFFE_MODEL;
 
-    int ret = vaccel_sess_init(&sess,1);
+    int ret = vaccel_sess_init(&sess, 1);
     REQUIRE(ret == VACCEL_OK);
+
 
     // SECTION("sessions not init")
     // {
@@ -102,15 +122,16 @@ TEST_CASE("vaccel_sess_update_and_free", "[session]")
     //     sessions_bootstrap();
     // }
 
+    // Test session update
     ret = vaccel_sess_update(&sess, 2);
     REQUIRE(ret == VACCEL_OK);
 
-    ret = vaccel_sess_update(NULL,2);
-
+    ret = vaccel_sess_update(NULL, 2);
     REQUIRE(ret == VACCEL_EINVAL);
 
     REQUIRE(vaccel_sess_free(NULL) == VACCEL_EINVAL);
 
+    /*
     // SECTION("sessions not init (free)")
     // {
     //     sessions_cleanup();
@@ -118,17 +139,20 @@ TEST_CASE("vaccel_sess_update_and_free", "[session]")
     //     REQUIRE(ret == VACCEL_ESESS);
     //     sessions_bootstrap();
     // }
+    */
 
+    // Test session cleanup
     REQUIRE(vaccel_sess_free(&sess) == VACCEL_OK);
 
     // sessions_cleanup();
 }
 
-TEST_CASE("sess_unregister_null", "[session]")
-{   
+// Test case for unregistering a session with null parameters
+TEST_CASE("sess_unregister_null", "[session]") {
     int ret;
     // ret = sessions_bootstrap();
     // REQUIRE(VACCEL_OK == ret);
+
     struct vaccel_session sess;
 
     ret = vaccel_sess_init(&sess, 1);
@@ -143,7 +167,7 @@ TEST_CASE("sess_unregister_null", "[session]")
     bool check_bool = vaccel_sess_has_resource(&sess, &res);
     REQUIRE(check_bool);
 
-    ret = vaccel_sess_unregister(NULL,&res);
+    ret = vaccel_sess_unregister(NULL, &res);
     REQUIRE(ret == VACCEL_EINVAL);
 
     ret = vaccel_sess_unregister(&sess, NULL);
@@ -167,10 +191,8 @@ TEST_CASE("sess_unregister_null", "[session]")
     // REQUIRE(VACCEL_OK == ret);
 }
 
-
-
-TEST_CASE("session_sess", "[session]")
-{
+// Test case for session initialization, update, registration, and cleanup
+TEST_CASE("session_sess", "[session]") {
     int ret;
     struct vaccel_session test_sess;
     test_sess.hint = 0;
@@ -183,7 +205,7 @@ TEST_CASE("session_sess", "[session]")
     ret = resources_bootstrap();
     REQUIRE(VACCEL_OK == ret);
 
-    ret = vaccel_sess_init(&test_sess,1);
+    ret = vaccel_sess_init(&test_sess, 1);
     REQUIRE(VACCEL_OK == ret);
 
     ret = vaccel_sess_update(&test_sess, 2);
@@ -203,11 +225,10 @@ TEST_CASE("session_sess", "[session]")
 
     // ret = sessions_cleanup();
     // REQUIRE(VACCEL_OK == ret);
-
 }
 
-TEST_CASE("session_sess_virtio", "[session]")
-{
+// Test case for session initialization, update, registration, and cleanup with a VirtIO plugin
+TEST_CASE("session_sess_virtio", "[session]") {
     int ret;
     struct vaccel_session test_sess;
     test_sess.hint = 0;
@@ -252,12 +273,13 @@ TEST_CASE("session_sess_virtio", "[session]")
     ret = vaccel_sess_free(&test_sess);
     REQUIRE(VACCEL_OK == ret);
 
+    // Ensure that the VirtIO plugin was called the expected number of times
     REQUIRE(get_virtio_plugin_fake.call_count == 5);
 
+    // Cleanup session and resource systems
     // ret = resources_cleanup();
     // REQUIRE(VACCEL_OK == ret);
 
     // ret = sessions_cleanup();
     // REQUIRE(VACCEL_OK == ret);
-
 }

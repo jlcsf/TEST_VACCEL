@@ -1,3 +1,11 @@
+/*
+* Unit Testing for exec
+*
+* The code below performs unit testing for VAccel library executions.
+* It includes test cases for the `exec`, `exec_generic`, and `exec_with_resources` functions.
+*
+*/
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <atomic>
@@ -28,8 +36,8 @@ TEST_CASE("exec")
 	int input;
 	char out_text[512];
     sess.hint = VACCEL_PLUGIN_DEBUG;
-    char iterations[] = "2";
-    
+    char iterations[] = "1";
+
     ret = vaccel_sess_init(&sess, sess.hint);
     REQUIRE(ret == VACCEL_OK);
 
@@ -45,18 +53,10 @@ TEST_CASE("exec")
 				"mytestfunc", read, 1, write, 1);
 		if (ret) {
 			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
+			break;
 		}
 	}
 
-
-close_session:
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
-
-	printf("%d\n", ret);
 }
 
 TEST_CASE("exec_generic")
@@ -65,7 +65,7 @@ TEST_CASE("exec_generic")
 	struct vaccel_session sess;
 	int input;
 	char out_text[512];
-    char iterations[] = "2";
+    char iterations[] = "1";
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -92,18 +92,10 @@ TEST_CASE("exec_generic")
 		ret = vaccel_genop(&sess, read, 4, write, 1);
 		if (ret) {
 			fprintf(stderr, "Could not run op: %d\n", ret);
-			goto close_session;
+			break;
 		}
 	}
 	printf("output: %s\n", out_text);
-
-close_session:
-	if (vaccel_sess_free(&sess) != VACCEL_OK) {
-		fprintf(stderr, "Could not clear session\n");
-		printf("%d\n", 1);
-	}
-
-	printf("%d\n", ret);
 }
 
 

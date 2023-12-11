@@ -10,6 +10,8 @@ extern "C" {
 #include <string.h>
 #include <dlfcn.h>
 
+// TODO: Investigate unregister plugin function and freeing memory
+
 // static const char *pname = "mock_plugin_test";
 
 // // void dummy_function() {}

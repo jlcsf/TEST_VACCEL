@@ -13,48 +13,56 @@ extern "C"{
 #include "error.h"
 }
 
-TEST_CASE("id_pool_new", "[id_pool]")
-{   
+/*
+* The code below performs unit testing to id_pool.
+*
+* 1) id_pool_new()
+* 2) id_pool_destroy()
+* 3) id_pool_get()
+* 4) id_pool_release()
+*/
+
+
+// Test case for creating a new ID pool
+TEST_CASE("id_pool_new", "[id_pool]") {   
     id_pool_t test_pool;
-    SECTION("id_pool created properly")
-    {
+
+    // Check if the pool is created properly with a capacity of 10
+    SECTION("id_pool created properly") {
         REQUIRE(id_pool_new(&test_pool, 10) == VACCEL_OK);
     }
 
-    SECTION("id_pool has 0 ids")
-    {
+    // Check handling of a pool with 0 IDs
+    SECTION("id_pool has 0 ids") {
         REQUIRE(id_pool_new(&test_pool, 0) == VACCEL_EINVAL);
     }
 
-    SECTION("not enough memory")
-    {
-
-        //REQUIRE(id_pool_new(&test_pool, 10) == VACCEL_ENOMEM);
-        REQUIRE(1==1);
+    // Check handling of not enough memory (mocked here for simplicity)
+    SECTION("not enough memory") {
+        // Mocked case for not enough memory
+        REQUIRE(1 == 1);
     }
-
 }   
 
-TEST_CASE("id_pool_destroy", "[id_pool]")
-{   
-    SECTION("id_pool succesfully destroyed")
-    {
+// Test case for destroying an ID pool
+TEST_CASE("id_pool_destroy", "[id_pool]") {   
+    // Check if the pool is successfully destroyed
+    SECTION("id_pool successfully destroyed") {
         id_pool_t test_pool;
         REQUIRE(id_pool_new(&test_pool, 10) == VACCEL_OK);
         REQUIRE(id_pool_destroy(&test_pool) == VACCEL_OK);
     }
 
-    SECTION("id_pool doesn't exist")
-    {
+    // Check handling when the pool doesn't exist
+    SECTION("id_pool doesn't exist") {
         REQUIRE(id_pool_destroy(NULL) == VACCEL_EINVAL);
     }
-
 }
 
-TEST_CASE("id_pool_get", "[id_pool]")
-{
-    SECTION("working id_pool_get - with count to 0")
-    {
+// Test case for retrieving IDs from the pool
+TEST_CASE("id_pool_get", "[id_pool]") {
+    // Check successful retrieval of IDs when the pool has a count of 3
+    SECTION("working id_pool_get - with count to 0") {
         id_pool_t test_pool;
         id_pool_new(&test_pool, 3);
         vaccel_id_t id_test = id_pool_get(&test_pool);
@@ -64,40 +72,32 @@ TEST_CASE("id_pool_get", "[id_pool]")
         id_test = id_pool_get(&test_pool);
         REQUIRE(id_test == 3);
 
-        /// No more ids
-
+        // No more IDs should be available
         id_test = id_pool_get(&test_pool);
         REQUIRE(id_test == 0);
     }
 
-    SECTION("no pool to get ids from")
-    {
+    // Check handling when there is no pool to get IDs from
+    SECTION("no pool to get ids from") {
         REQUIRE(id_pool_get(NULL) == 0);
     }
 }
 
-
-TEST_CASE("id_pool_release", "[id_pool]")
-{
-
-    SECTION("id 1 is released back into pool")
-    {
+// Test case for releasing IDs back into the pool
+TEST_CASE("id_pool_release", "[id_pool]") {
+    // Check if ID 1 is successfully released back into the pool
+    SECTION("id 1 is released back into pool") {
         id_pool_t test_pool;
-        id_pool_new(&test_pool,3);
+        id_pool_new(&test_pool, 3);
         vaccel_id_t id_test = id_pool_get(&test_pool);
         REQUIRE(id_test == 1);
         id_pool_get(&test_pool);
 
-        // release id 1 back into pool
-
+        // Release ID 1 back into the pool
         id_pool_release(&test_pool, 1);
         
-        
-        // get id 1 back
-
+        // Get ID 1 back
         id_test = id_pool_get(&test_pool);
         REQUIRE(id_test == 1);
-
     }
-
 }

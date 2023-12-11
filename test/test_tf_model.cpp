@@ -1,3 +1,10 @@
+/*
+ * TensorFlow Model Test
+ *
+ * The code below tests TensorFlow model handling using vAccel.
+ * 
+ */
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <atomic>

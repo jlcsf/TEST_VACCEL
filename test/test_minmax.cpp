@@ -1,3 +1,14 @@
+/*
+* Unit Testing for VAccel Min-Max Operation
+*
+* The code below performs unit testing for the VAccel Min-Max operation.
+* It includes two test cases: one for the standard Min-Max operation and another
+* for the generic version using vaccel_genop. Both test cases read input data from
+* a CSV file, perform the Min-Max operation, and print the results along with
+* the execution time.
+*
+*/
+
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
 
