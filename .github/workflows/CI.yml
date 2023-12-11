@@ -107,7 +107,7 @@ jobs:
         rm build_${{matrix.build_type}} -rf
         mkdir -p build_${{matrix.build_type}}
         cd build_${{matrix.build_type}}
-        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DBUILD_PLUGIN_EXEC=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         make
         ls examples
         make test ARGS="-V"
