@@ -2,17 +2,17 @@
 #include <fff.h>
 DEFINE_FFF_GLOBALS;
 
-extern "C"{
+extern "C" {
 #include "misc.h"
 FAKE_VALUE_FUNC(int, get_available_plugins, enum vaccel_op_type);
 }
 
 /*
-* The code below performs unit testing to misc.
-*
-* 1) vaccel_get_plugins()
-*
-*/
+ * The code below performs unit testing to misc.
+ *
+ * 1) vaccel_get_plugins()
+ *
+ */
 
 TEST_CASE("vaccel_get_plugins", "[vaccel_get_plugins]")
 {
@@ -31,6 +31,4 @@ TEST_CASE("vaccel_get_plugins", "[vaccel_get_plugins]")
     {
         REQUIRE(vaccel_get_plugins(NULL, VACCEL_NO_OP) == VACCEL_EINVAL);
     }
-
-
 }
