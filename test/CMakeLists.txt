@@ -13,7 +13,7 @@ set(COMMON_COMPILE_OPTIONS -Wall -Wextra -g -ggdb --coverage -lgcov)
 
 # Function to simplify adding tests
 function(add_test_target_core TARGET_NAME SOURCE_FILE)
-    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/unit_tests/${SOURCE_FILE})
+    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/unit/${SOURCE_FILE})
     target_include_directories(${TARGET_NAME}
         PRIVATE
             ../third-party/slog/src
@@ -27,7 +27,7 @@ function(add_test_target_core TARGET_NAME SOURCE_FILE)
 endfunction()
 
 function(add_test_target_api TARGET_NAME SOURCE_FILE)
-    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/operation_tests/${SOURCE_FILE})
+    add_executable(${TARGET_NAME} ${PROJECT_SOURCE_DIR}/op/${SOURCE_FILE})
     target_include_directories(${TARGET_NAME}
         PRIVATE
             ../third-party/slog/src
