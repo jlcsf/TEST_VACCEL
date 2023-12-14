@@ -145,17 +145,17 @@ TEST_CASE("id_pool_release", "[id_pool]")
         REQUIRE(test_pool.next == 1);
 
         id_pool_get(&test_pool);
-        
+
         REQUIRE(test_pool.ids != nullptr);
         REQUIRE(test_pool.max == 3);
         REQUIRE(test_pool.next == 2);
 
         // Release ID 1 back into the pool
         id_pool_release(&test_pool, 1);
-    
+
         REQUIRE(test_pool.ids != nullptr);
         REQUIRE(test_pool.max == 3);
-        REQUIRE(test_pool.next == 1);  // this goes back to 1
+        REQUIRE(test_pool.next == 1); // this goes back to 1
 
         // Get ID 1 back
         id_test = id_pool_get(&test_pool);
@@ -163,6 +163,6 @@ TEST_CASE("id_pool_release", "[id_pool]")
         REQUIRE(id_test == 1);
         REQUIRE(test_pool.ids != nullptr);
         REQUIRE(test_pool.max == 3);
-        REQUIRE(test_pool.next == 2);  
+        REQUIRE(test_pool.next == 2);
     }
 }
