@@ -129,8 +129,6 @@ TEST_CASE("Resource Create Rundir", "[Resources]")
     REQUIRE(list_empty(&res.entry));
     REQUIRE(res.refcount == 0);
     REQUIRE_FALSE(res.rundir == NULL);
-
-
 }
 
 // Test case for finding a resource by ID (failure case)
@@ -183,7 +181,6 @@ TEST_CASE("find_resource_by_id", "[Resources]")
     REQUIRE_FALSE(list_empty(&result_resource->entry));
     REQUIRE(result_resource->refcount == 0);
     REQUIRE(result_resource->rundir == NULL);
-
 
     // Cleanup the test resource
     result = resource_destroy(&test_res);
