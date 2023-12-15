@@ -31,37 +31,40 @@ extern "C" {
 TEST_CASE("exec")
 {
     int ret;
-    struct vaccel_session sess;
-    int input;
+    int input = 10;
     char out_text[512];
-    sess.hint = VACCEL_PLUGIN_DEBUG;
-    char iterations[] = "1";
+    struct vaccel_session sess;
+    sess.session_id = 0;
+    sess.priv = nullptr;
+    sess.resources = nullptr;
+    sess.hint = 0;
 
-    ret = vaccel_sess_init(&sess, sess.hint);
+    ret = vaccel_sess_init(&sess, VACCEL_PLUGIN_DEBUG);
     REQUIRE(ret == VACCEL_OK);
-
-    input = 10;
 
     struct vaccel_arg read[1] = { { .size = sizeof(input), .buf = &input } };
     struct vaccel_arg write[1] = { { .size = sizeof(out_text), .buf = out_text } };
 
-    for (int i = 0; i < atoi(iterations); ++i) {
-        ret = vaccel_exec(&sess, "../plugins/noop/libvaccel-noop.so", "mytestfunc",
-            read, 1, write, 1);
-        if (ret) {
-            fprintf(stderr, "Could not run op: %d\n", ret);
-            break;
-        }
-    }
+    ret = vaccel_exec(&sess, "../plugins/noop/libvaccel-noop.so", "mytestfunc", read, 1, write, 1);
+    REQUIRE(ret == VACCEL_OK);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == VACCEL_PLUGIN_DEBUG);
+    REQUIRE(sess.resources);
+    REQUIRE(sess.priv == nullptr);
 }
 
 TEST_CASE("exec_generic")
 {
     int ret;
+    
     struct vaccel_session sess;
+    sess.session_id = 0;
+    sess.priv = nullptr;
+    sess.resources = nullptr;
+    sess.hint = 0;
+
     int input;
     char out_text[512];
-    char iterations[] = "1";
 
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
@@ -83,14 +86,13 @@ TEST_CASE("exec_generic")
         { .size = sizeof(out_text), .buf = out_text },
     };
 
-    for (int i = 0; i < atoi(iterations); ++i) {
-        ret = vaccel_genop(&sess, read, 4, write, 1);
-        if (ret) {
-            fprintf(stderr, "Could not run op: %d\n", ret);
-            break;
-        }
-    }
+    ret = vaccel_genop(&sess, read, 4, write, 1);
+    REQUIRE(ret == VACCEL_OK);   
     printf("output: %s\n", out_text);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 0);
+    REQUIRE(sess.resources);
+    REQUIRE(sess.priv == nullptr);
 }
 
 extern "C" {
@@ -143,34 +145,56 @@ static unsigned char* read_file(const char* path, size_t* len)
 TEST_CASE("exec_with_resources")
 {
 
-    int input;
+    int input, ret;
     char out_text[512];
     char out_text2[512];
-    char iterations[] = "1";
     const char plugin_path[] = "../plugins/noop/libvaccel-noop.so";
 
     struct vaccel_shared_object object;
+    object.resource = nullptr;
+    object.plugin_data = nullptr;
 
-    int ret = vaccel_shared_object_new(&object, plugin_path);
+    ret = vaccel_shared_object_new(&object, plugin_path);
     REQUIRE(ret == VACCEL_OK);
+    REQUIRE(object.resource);
 
     struct vaccel_session sess;
+    sess.session_id = 0;
+    sess.priv = nullptr;
+    sess.resources = nullptr;
+    sess.hint = 1;
+
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 0);
+    REQUIRE(sess.resources);
+    REQUIRE(sess.priv == nullptr);
 
     ret = vaccel_sess_register(&sess, object.resource);
     REQUIRE(ret == VACCEL_OK);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 0);
+    REQUIRE_FALSE(list_empty(&sess.resources->registered[object.resource->type]));
+    REQUIRE(sess.priv == nullptr);
 
     struct vaccel_shared_object object2;
+    object2.resource = nullptr;
+    object2.plugin_data = nullptr;
     size_t len = 0;
     unsigned char* buff = read_file(plugin_path, &len);
     REQUIRE(buff);
 
     ret = vaccel_shared_object_new_from_buffer(&object2, buff, len);
     REQUIRE(ret == VACCEL_OK);
+    REQUIRE(object2.resource);
 
     ret = vaccel_sess_register(&sess, object2.resource);
     REQUIRE(ret == VACCEL_OK);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 0);
+    REQUIRE_FALSE(list_empty(&sess.resources->registered[object2.resource->type]));
+    REQUIRE(sess.priv == nullptr);
 
     input = 10;
     struct vaccel_arg read[1] = { { .size = sizeof(input), .buf = &input } };
@@ -178,14 +202,7 @@ TEST_CASE("exec_with_resources")
         { .size = sizeof(out_text), .buf = out_text },
     };
 
-    for (int i = 0; i < atoi(iterations); ++i) {
-        ret = vaccel_exec_with_resource(&sess, &object, "mytestfunc", read, 1,
-            write, 1);
-        if (ret) {
-            fprintf(stderr, "Could not run op: %d\n", ret);
-            break;
-        }
-    }
+    ret = vaccel_exec_with_resource(&sess, &object, "mytestfunc", read, 1, write, 1);
     REQUIRE(ret == VACCEL_OK);
 
     struct vaccel_arg read_2[1] = { { .size = sizeof(input), .buf = &input } };
@@ -193,21 +210,22 @@ TEST_CASE("exec_with_resources")
         { .size = sizeof(out_text2), .buf = out_text2 },
     };
 
-    for (int i = 0; i < atoi(iterations); ++i) {
-        ret = vaccel_exec_with_resource(&sess, &object2, "mytestfunc", read_2, 1,
-            write_2, 1);
-        if (ret) {
-            fprintf(stderr, "Could not run op: %d\n", ret);
-            break;
-        }
-    }
+    ret = vaccel_exec_with_resource(&sess, &object2, "mytestfunc", read_2, 1, write_2, 1);
     REQUIRE(ret == VACCEL_OK);
 
     ret = vaccel_sess_unregister(&sess, object.resource);
     REQUIRE(ret == VACCEL_OK);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 0);
+    // REQUIRE(list_empty(&sess.resources->registered[object.resource->type]));
+    REQUIRE(sess.priv == nullptr);
 
     ret = vaccel_sess_unregister(&sess, object2.resource);
     REQUIRE(ret == VACCEL_OK);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 0);
+    // REQUIRE(list_empty(&sess.resources->registered[object2.resource->type]));
+    REQUIRE(sess.priv == nullptr);
 
     ret = vaccel_shared_object_destroy(&object);
     REQUIRE(ret == VACCEL_OK);
