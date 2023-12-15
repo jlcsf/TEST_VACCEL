@@ -50,13 +50,12 @@ TEST_CASE("main")
     REQUIRE(model.priv == nullptr);
     INFO("model.path: " << model.path);
 
-
     ret = vaccel_tf_saved_model_register(&model);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE_FALSE(model.path == nullptr);
     REQUIRE(model.priv == nullptr);
     REQUIRE_FALSE(model.resource == NULL);
-    
+
     ret = vaccel_sess_init(&vsess, 0);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE_FALSE(vsess.session_id == 0);
@@ -111,5 +110,4 @@ TEST_CASE("main")
     float* offsets = (float*)out->data;
     for (unsigned int i = 0; i < min(10, out->size / sizeof(float)); ++i)
         printf("%f\n", offsets[i]);
-
 }

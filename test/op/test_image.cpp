@@ -108,21 +108,18 @@ TEST_CASE("classify")
     REQUIRE(image_size);
     REQUIRE(&image);
 
-
     ret = vaccel_image_classification(
         &sess, image, (unsigned char*)out_text, (unsigned char*)out_imagename,
         image_size, sizeof(out_text), sizeof(out_imagename));
-    
+
     printf("classification tags: %s\n", out_text);
 
     ret = vaccel_sess_free(&sess);
     REQUIRE(ret == VACCEL_OK);
 }
 
-
 TEST_CASE("depth")
 {
-
 
     char file_path[] = "../../examples/images/example.jpg";
     int ret;
@@ -136,7 +133,6 @@ TEST_CASE("depth")
     sess.resources = nullptr;
     sess.hint = 1;
 
-
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE(sess.session_id);
@@ -149,9 +145,8 @@ TEST_CASE("depth")
     REQUIRE(image_size);
     REQUIRE(&image);
 
-
     ret = vaccel_image_depth(&sess, image, (unsigned char*)out_imagename,
-            image_size, sizeof(out_imagename));
+        image_size, sizeof(out_imagename));
     REQUIRE(ret == VACCEL_OK);
     printf("depth estimation imagename: %s\n", out_imagename);
 
@@ -173,7 +168,6 @@ TEST_CASE("detect")
     sess.resources = nullptr;
     sess.hint = 1;
 
-
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE(sess.session_id);
@@ -186,21 +180,17 @@ TEST_CASE("detect")
     REQUIRE(image_size);
     REQUIRE(&image);
 
-
     ret = vaccel_image_detection(&sess, image, (unsigned char*)out_imagename,
-            image_size, sizeof(out_imagename));
+        image_size, sizeof(out_imagename));
     REQUIRE(ret == VACCEL_OK);
     printf("detection image name: %s\n", out_imagename);
 
     ret = vaccel_sess_free(&sess);
     REQUIRE(ret == VACCEL_OK);
-
 }
-
 
 TEST_CASE("pose")
 {
-
 
     char file_path[] = "../../examples/images/example.jpg";
     int ret;
@@ -214,7 +204,6 @@ TEST_CASE("pose")
     sess.resources = nullptr;
     sess.hint = 1;
 
-
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE(sess.session_id);
@@ -227,17 +216,14 @@ TEST_CASE("pose")
     REQUIRE(image_size);
     REQUIRE(&image);
 
-
     ret = vaccel_image_pose(&sess, image, (unsigned char*)out_imagename,
-            image_size, sizeof(out_imagename));
+        image_size, sizeof(out_imagename));
     REQUIRE(ret == VACCEL_OK);
     printf("pose estimation imagename: %s\n", out_imagename);
 
     ret = vaccel_sess_free(&sess);
     REQUIRE(ret == VACCEL_OK);
-
 }
-
 
 TEST_CASE("segmentation")
 {
@@ -254,7 +240,6 @@ TEST_CASE("segmentation")
     sess.resources = nullptr;
     sess.hint = 1;
 
-
     ret = vaccel_sess_init(&sess, 0);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE(sess.session_id);
@@ -267,13 +252,11 @@ TEST_CASE("segmentation")
     REQUIRE(image_size);
     REQUIRE(&image);
 
-
     ret = vaccel_image_segmentation(&sess, image, (unsigned char*)out_imagename,
-            image_size, sizeof(out_imagename));
+        image_size, sizeof(out_imagename));
     REQUIRE(ret == VACCEL_OK);
-    printf( "segmentation output: %s\n", out_imagename);
+    printf("segmentation output: %s\n", out_imagename);
 
     ret = vaccel_sess_free(&sess);
     REQUIRE(ret == VACCEL_OK);
 }
-

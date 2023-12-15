@@ -81,7 +81,7 @@ TEST_CASE("vaccel_fpga_copy", "[vaccel_fpga_plugins]")
     sess.priv = nullptr;
     sess.resources = nullptr;
     sess.hint = 1;
-    
+
     int A[] = { 1, 2, 3, 4, 5 };
     int B[] = { 1, 1, 1, 1, 1 };
 

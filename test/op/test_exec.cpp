@@ -57,7 +57,7 @@ TEST_CASE("exec")
 TEST_CASE("exec_generic")
 {
     int ret;
-    
+
     struct vaccel_session sess;
     sess.session_id = 0;
     sess.priv = nullptr;
@@ -88,7 +88,7 @@ TEST_CASE("exec_generic")
     };
 
     ret = vaccel_genop(&sess, read, 4, write, 1);
-    REQUIRE(ret == VACCEL_OK);   
+    REQUIRE(ret == VACCEL_OK);
     printf("output: %s\n", out_text);
     REQUIRE(sess.session_id);
     REQUIRE(sess.hint == 0);
@@ -203,7 +203,7 @@ TEST_CASE("exec_with_resources")
     REQUIRE(sess.hint == 0);
     REQUIRE_FALSE(list_empty(&sess.resources->registered[object.resource->type]));
     REQUIRE(sess.priv == nullptr);
-    
+
     ret = vaccel_sess_register(&sess2, object2.resource);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE(sess2.session_id);
@@ -235,7 +235,6 @@ TEST_CASE("exec_with_resources")
     REQUIRE(sess2.hint == 0);
     REQUIRE_FALSE(list_empty(&sess2.resources->registered[object2.resource->type]));
     REQUIRE(sess2.priv == nullptr);
-
 
     ret = vaccel_sess_unregister(&sess, object.resource);
     REQUIRE(ret == VACCEL_OK);

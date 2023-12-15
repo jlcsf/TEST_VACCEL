@@ -82,7 +82,6 @@ free_buff:
 }
 }
 
-
 TEST_CASE("classify_generic")
 {
     char file_path[] = "../../examples/images/example.jpg";
@@ -135,7 +134,6 @@ TEST_CASE("classify_generic")
     REQUIRE(ret == VACCEL_OK);
 }
 
-
 TEST_CASE("depth_generic")
 {
     char file_path[] = "../../examples/images/example.jpg";
@@ -187,10 +185,8 @@ TEST_CASE("depth_generic")
     REQUIRE(ret == VACCEL_OK);
 }
 
-
 TEST_CASE("detect_generic")
 {
-
 
     char file_path[] = "../../examples/images/example.jpg";
     int ret;
@@ -241,11 +237,8 @@ TEST_CASE("detect_generic")
     REQUIRE(ret == VACCEL_OK);
 }
 
-
-
 TEST_CASE("pose_generic")
 {
-
 
     char file_path[] = "../../examples/images/example.jpg";
     int ret;
@@ -287,28 +280,23 @@ TEST_CASE("pose_generic")
         { .size = sizeof(out_imagename), .buf = out_imagename },
     };
 
-
     ret = vaccel_genop(&sess, read, 2, write, 1);
     REQUIRE(ret == VACCEL_OK);
     printf("pose estimation imagename: %s\n", out_imagename);
 
     ret = vaccel_sess_free(&sess);
     REQUIRE(ret == VACCEL_OK);
-
 }
-
-
 
 TEST_CASE("segmentation_generic")
 {
-
 
     char file_path[] = "../../examples/images/example.jpg";
     int ret;
     char* image;
     size_t image_size = 0;
     char out_imagename[512];
-    
+
     struct vaccel_session sess;
     sess.session_id = 0;
     sess.priv = nullptr;
@@ -345,7 +333,7 @@ TEST_CASE("segmentation_generic")
 
     ret = vaccel_genop(&sess, read, 2, write, 1);
     REQUIRE(ret == VACCEL_OK);
-    printf( "segmentation output: %s\n", out_imagename);
+    printf("segmentation output: %s\n", out_imagename);
 
     ret = vaccel_sess_free(&sess);
     REQUIRE(ret == VACCEL_OK);
