@@ -78,3 +78,17 @@ jobs:
         disable_globbing: true
         commit_message: Updated coverage
         file_pattern: '*.md'
+    
+    - name: Valgrind memory tests
+      run: |
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_id_pool
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_log
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_misc_mock
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_misc
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_plugin
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_resource
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_session
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_vaccel
+
+
+
