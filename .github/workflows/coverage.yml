@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies for tests
       id: install_dependencies
       run : |
-        sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr
+        sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr valgrind
         pip install --upgrade gcovr
         pip install pycobertura
 
