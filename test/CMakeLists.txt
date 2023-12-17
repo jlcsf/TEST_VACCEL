@@ -9,7 +9,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-set(COMMON_COMPILE_OPTIONS -Wall -Wextra -g -ggdb --coverage -lgcov)
+set(COMMON_COMPILE_OPTIONS -Wall -Wextra -g -ggdb --coverage)
 
 # Function to simplify adding tests
 function(add_test_target_core TARGET_NAME SOURCE_FILE)

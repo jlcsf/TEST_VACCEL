@@ -78,29 +78,6 @@ jobs:
         disable_globbing: true
         commit_message: Updated coverage
         file_pattern: '*.md'
-    
-    - name: Valgrind memory tests
-      run: |
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_id_pool
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_log
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_misc_mock
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_misc
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_plugin
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_resource
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_session
-        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_vaccel
-        cd build/test/  
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_blas
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_exec
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image_generic  
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image   
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_minmax     
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_noop        
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_interference        
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_model
-        env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_saved_model     
-
 
 
 

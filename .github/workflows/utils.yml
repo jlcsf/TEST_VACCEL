@@ -7,8 +7,118 @@ on:
       - completed
 
 jobs:
+
+  test_valgrind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      
+      - name: Run tests
+        run: |
+          mkdir build
+          cd build
+          cmake ../ -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON
+          make
+          make test
+      
+      - name: Run valgrind tests
+        run: |
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_id_pool
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_log
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_misc_mock
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_misc
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_plugin
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_resource
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_session
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_vaccel
+          cd build/test/  
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_blas
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_exec
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image_generic  
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image   
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_minmax     
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_noop        
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_interference        
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_model
+          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_saved_model    
+
+  coverage:
+    needs: test_valgrind
+    runs-on: ubuntu-latest
+    outputs:
+      commit_hash: ${{ steps.commit-and-push.outputs.commit_hash }}
+
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Apply coverage patch
+      id: coverage_patch
+      run: |
+        cd ${{github.workspace}}/src/
+        patch < ../test/docs/coverage.patch
+
+    - name: Install dependencies for tests
+      id: install_dependencies
+      run : |
+        sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr valgrind
+        pip install --upgrade gcovr
+        pip install pycobertura
+
+    - name: Run Coverage
+      id: run_coverage
+      run: |
+        mkdir build
+        cd build
+        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DGCOV_EXECUTABLE=gcov-12
+        make
+        make test ARGS="-V"
+        cd ../
   
+    - name: Generate coverage report
+      run: gcovr --cobertura --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
+      shell: bash
+    
+    - name: Produce markdown file
+      run: pycobertura show ${{github.workspace}}/test/docs/coverage.xml --format markdown --output ${{github.workspace}}/test/docs/coverage/coverage.md
+      shell: bash
+        
+    - name: Configure Git
+      run: |
+        echo "Setting up git configuration..."
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+
+    # - name: Push to vaccel-docs
+    #   uses: datalbry/copy_folder_to_another_repo_action@1.0.0
+    #   env:
+    #     API_TOKEN_GITHUB: ${{ secrets.NBFC_BUILDER_TOKEN }}
+    #   with:
+    #     source_folder: 'test/docs/coverage'
+    #     destination_repo: 'nubificus/vaccel-docs'
+    #     destination_folder: 'docs/python'
+    #     user_email: 'jlima@nubificus.co.uk'
+    #     user_name: 'jlima'
+    #     commit_msg: '[GHA] Update the coverage files'
+    #     destination_branch: 'feat_coverage'
+
+    - name: Commit and push changes
+      id: commit-and-push
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        disable_globbing: true
+        commit_message: Updated coverage
+        file_pattern: '*.md'
+
   spell_check:
+    needs: test_valgrind
     name: spell check
     runs-on: ubuntu-latest
     steps:
@@ -21,12 +131,13 @@ jobs:
       run: pip3 install codespell
     
     - name: Run spell check
+      continue-on-error: true
       run: | 
         codespell ./src
         codespell ./test
     
-  
-  static_analyzer:
+  static_analyzer_cppcheck:
+    needs: test_valgrind
     name: static_analyzer
     runs: ubuntu-latest
     steps:
@@ -50,6 +161,31 @@ jobs:
     - name : Run cppcheck in plugins
       run : cppcheck --enable=style plugins
 
+  Linter:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: linter
+        uses: super-linter/super-linter@v5
+        env:
+          DEFAULT_BRANCH: main
+          # To report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISABLE_ERRORS: true 
+          VALIDATE_CLANG_FORMAT: true
+          FILTER_REGEX_EXCLUDE: .*test/.*
 
 
 
