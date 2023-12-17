@@ -28,7 +28,7 @@ jobs:
   
   static_analyzer:
     name: static_analyzer
-    runs: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
