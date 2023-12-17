@@ -190,7 +190,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true 
           VALIDATE_CLANG_FORMAT: true
-          FILTER_REGEX_EXCLUDE: .*test/.*
+          FILTER_REGEX_EXCLUDE: .*test/.* ./examples/.*
 
 
 
