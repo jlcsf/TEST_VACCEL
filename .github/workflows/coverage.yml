@@ -89,6 +89,17 @@ jobs:
         valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_resource
         valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_session
         valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_vaccel
+        env VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/noop/libvaccel-noop.so
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_blas
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_exec
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_fpga
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_image_generic
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_image
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_minmax
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_noop
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_tf_interference
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_tf_model
+        valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_tf_saved_model
 
 
 
