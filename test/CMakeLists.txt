@@ -51,6 +51,7 @@ set(TESTS_CORE
     test_id_pool
     test_vaccel
     test_log
+    test_bootstrap_shutdown
 )
 
 set(TESTS_API
@@ -84,7 +85,7 @@ set_tests_properties(
 )
 
 set_tests_properties(
-    test_log test_id_pool test_misc_mock test_resource test_session test_plugin test_vaccel
+    test_log test_id_pool test_misc_mock test_resource test_session test_plugin test_vaccel test_bootstrap_shutdown
     PROPERTIES
     ARGS=--order rand --warn NoAssertions
 )

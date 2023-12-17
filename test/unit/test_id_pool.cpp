@@ -52,8 +52,6 @@ TEST_CASE("id_pool_new", "[id_pool]")
         // Mocked case for not enough memory
         REQUIRE(1 == 1);
     }
-
-    
 }
 
 // Test case for destroying an ID pool
@@ -170,7 +168,7 @@ TEST_CASE("id_pool_release", "[id_pool]")
         REQUIRE(test_pool.ids != nullptr);
         REQUIRE(test_pool.max == 3);
         REQUIRE(test_pool.next == 2);
-        
+
         REQUIRE(id_pool_destroy(&test_pool) == VACCEL_OK);
     }
 }
