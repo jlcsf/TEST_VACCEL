@@ -1,0 +1,62 @@
+name: utility
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+jobs:
+  
+  spell_check:
+    name: spell check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Install codespell
+      run: pip3 install codespell
+    
+    - name: Run spell check
+      run: | 
+        codespell ./src
+        codespell ./test
+    
+  
+  static_analyzer:
+    name: static_analyzer
+    runs: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    
+    - name: Install cppcheck
+      run: sudo apt install cppcheck
+    
+    - name: Run cppcheck in src
+      run: cppcheck --enable=style src
+    
+    - name: Run cppcheck in examples
+      run : cppcheck --enable=style examples
+    
+    - name: Run cppcheck in test
+      run : cppcheck --enable=style test
+
+    - name : Run cppcheck in plugins
+      run : cppcheck --enable=style plugins
+
+
+
+
+
+
+
+
+
+
+
