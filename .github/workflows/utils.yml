@@ -180,11 +180,12 @@ jobs:
         make
         make test ARGS="-V"
         cd ../
-        gcovr --gcov-executable gcov-12 -s -o ${{github.workspace}}/test/docs/temp.txt --txt -e "build/_deps/*" |& tee ${{github.workspace}}/test/docs/coverage_pr.txt
       shell: bash
 
     - name: Calculate coverage difference
-      run: diff ${{github.workspace}}/test/docs/coverage_main.txt ${{github.workspace}}/test/docs/coverage_pr.txt > ${{github.workspace}}/test/docs/coverage_diff.txt 
+      run: |
+        gcovr --gcov-executable gcov-12 -s -o ${{github.workspace}}/test/docs/temp.txt --txt -e "build/_deps/*" |& tee ${{github.workspace}}/test/docs/coverage_pr.txt
+        diff ${{github.workspace}}/test/docs/coverage_main.txt ${{github.workspace}}/test/docs/coverage_pr.txt > ${{github.workspace}}/test/docs/coverage_diff.txt 
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
