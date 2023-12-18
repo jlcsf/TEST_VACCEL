@@ -186,7 +186,7 @@ jobs:
 
     - name: Calculate coverage difference
       run: |
-        colordiff -u test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt
+        diff -u test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt
       shell: bash
     
     - name: PR comment with file
