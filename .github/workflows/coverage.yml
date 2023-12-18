@@ -49,12 +49,15 @@ jobs:
       shell: bash
 
     - name: Generate new XML file
-      run: gcovr --cobertura=./test/docs/coverage_pr.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
+      run: gcovr --cobertura=./test/docs/coverage_main.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
       shell: bash
     
     - name: Produce markdown file
       run: pycobertura show ${{github.workspace}}/test/docs/coverage.xml --format markdown --output ${{github.workspace}}/test/docs/coverage/coverage.md
       shell: bash
+
+    - name: Remove xml file
+      run: rm ${{github.workspace}}/test/docs/coverage.xml 
         
     - name: Configure Git
       run: |
