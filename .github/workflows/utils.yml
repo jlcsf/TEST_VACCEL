@@ -188,7 +188,8 @@ jobs:
     
     - name: Calculate diff
       run : |
-        touch ${{github.workspace}}/test/docs/coverage_diff.txt && diff ${{github.workspace}}/test/docs/coverage_main.txt ${{github.workspace}}/test/docs/coverage_pr.txt > ${{github.workspace}}/test/docs/coverage_diff.txt 
+        ls ${{github.workspace}}/test/docs/
+        diff ${{github.workspace}}/test/docs/coverage_main.txt ${{github.workspace}}/test/docs/coverage_pr.txt > ${{github.workspace}}/test/docs/coverage_diff.txt 
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
