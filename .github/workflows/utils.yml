@@ -150,6 +150,51 @@ jobs:
         fetch-depth: ${{ env.PR_FETCH_DEPTH }}
     - name: Run checkpatch review
       uses: webispy/checkpatch-action@v9
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+  coverage_diff:
+    runs-on: ubuntu-latest
+    outputs:
+      commit_hash: ${{ steps.commit-and-push.outputs.commit_hash }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Apply coverage patch
+      id: coverage_patch
+      run: |
+        cd ${{github.workspace}}/src/
+        patch < ../test/docs/coverage.patch
+
+    - name: Install dependencies for tests
+      id: install_dependencies
+      run: |
+        sudo apt-get install -y lcov cmake gcc g++ libclang-dev gcovr colordiff
+        pip install --upgrade gcovr
+        pip install pycobertura
+
+    - name: Run Coverage on PR branch
+      id: run_coverage_pr
+      run: |
+        mkdir build
+        cd build
+        cmake ${{github.workspace}} -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DGCOV_EXECUTABLE=gcov-12
+        make
+        make test ARGS="-V"
+        cd ../
+        gcovr --gcov-executable gcov-12 -s -o --txt -e "build/_deps/*" |& tee test/docs/coverage_pr.txt
+        rm test/docs/temp.txt
+      shell: bash
+
+    - name: Calculate coverage difference
+      run: |
+        diff --color=always test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt 
+      shell: bash
+    
+    - name: PR comment with file
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        filePath: ./test/docs/coverage_diff.txt
 
