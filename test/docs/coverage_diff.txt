@@ -1,8 +1,0 @@
-[36m1,3c1,3[0m
-[31m< lines: 65.7% (2166 out of 3298)[0m
-[31m< functions: 70.2% (184 out of 262)[0m
-[31m< branches: 36.4% (3183 out of 8753)[0m
----
-[32m> lines: 66.3% (2190 out of 3301)[0m
-[32m> functions: 71.0% (186 out of 262)[0m
-[32m> branches: 36.5% (3200 out of 8779)[0m
