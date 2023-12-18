@@ -184,8 +184,8 @@ jobs:
 
     - name: Calculate coverage difference
       run: |
-        gcovr --gcov-executable gcov-12 -s -o ${{github.workspace}}/test/docs/temp.txt --txt -e "build/_deps/*" |& tee ${{github.workspace}}/test/docs/coverage_pr.txt
-        diff ${{github.workspace}}/test/docs/coverage_main.txt ${{github.workspace}}/test/docs/coverage_pr.txt > ${{github.workspace}}/test/docs/coverage_diff.txt 
+        touch ./test/docs/coverage_pr.txt && gcovr --gcov-executable gcov-12 -s -o ${{github.workspace}}/test/docs/temp.txt --txt -e "build/_deps/*" >> ${{github.workspace}}/test/docs/coverage_pr.txt
+        touch ./test/docs/coverage_diff.txt && diff ${{github.workspace}}/test/docs/coverage_main.txt ${{github.workspace}}/test/docs/coverage_pr.txt > ${{github.workspace}}/test/docs/coverage_diff.txt 
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
