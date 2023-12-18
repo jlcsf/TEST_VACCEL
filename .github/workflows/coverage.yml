@@ -47,6 +47,10 @@ jobs:
     - name: Generate coverage report
       run: gcovr --cobertura --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
       shell: bash
+
+    - name: Generate new XML file
+      run: gcovr --cobertura=./test/docs/coverage_pr.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
+      shell: bash
     
     - name: Produce markdown file
       run: pycobertura show ${{github.workspace}}/test/docs/coverage.xml --format markdown --output ${{github.workspace}}/test/docs/coverage/coverage.md
@@ -77,7 +81,7 @@ jobs:
       with:
         disable_globbing: true
         commit_message: Updated coverage
-        file_pattern: '*.md'
+        file_pattern: '*.md *.xml'
 
 
 
