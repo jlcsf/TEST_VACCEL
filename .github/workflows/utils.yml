@@ -184,23 +184,11 @@ jobs:
 
     - name: Calculate coverage 
       run: |
-        touch ${{github.workspace}}/test/docs/coverage_pr.txt && gcovr --gcov-executable gcov-12 -s -o ${{github.workspace}}/test/docs/temp.txt --txt -e "build/_deps/*" >> ${{github.workspace}}/test/docs/coverage_pr.txt
-
-    - name: Debug information
-      run: |
-        ls ${{ github.workspace }}/test/docs
-        echo "Contents of coverage_main.txt:"
-        cat ${{ github.workspace }}/test/docs/coverage_main.txt
-        echo "Contents of coverage_pr.txt:"
-        cat ${{ github.workspace }}/test/docs/coverage_pr.txt
-      
-    - name: Run diff command
-      run: |
-        export XMLLINT_INDENT=$'\t'
-        diff test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt   
+        gcovr --cobertura=./test/docs/coverage_pr.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
+        pycobertura diff test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 . > coverage_diff.txt
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
       with:
-        filePath: ./test/docs/coverage_diff.txt
+        filePath: ./coverage_diff.txt
 
