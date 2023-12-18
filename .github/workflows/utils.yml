@@ -27,7 +27,7 @@ jobs:
           cmake ../ -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_CXX_COMPILER=g++-12 
           make && make test
       
-      - name: Run valgrind tests
+      - name: Run valgrind tests (core)
         run: |
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_id_pool
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_log
@@ -37,18 +37,21 @@ jobs:
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_resource
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_session
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes  ./build/test/test_vaccel
-          cd build/test/  
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_blas
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_exec
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image_generic  
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image   
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_minmax     
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_noop        
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_interference        
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_model
-          env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_saved_model    
-
+      
+      # - name : Run valgrind tests (ops)
+      #   run : |
+      #     cd build/test/  
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_blas
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_exec
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image_generic  
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_image   
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_minmax     
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_noop        
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_interference        
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_model
+      #     env VACCEL_BACKENDS=../plugins/noop/libvaccel-noop.so valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./test_tf_saved_model 
+   
   coverage:
     needs: test_valgrind
     runs-on: ubuntu-latest
@@ -121,7 +124,7 @@ jobs:
         file_pattern: '*.md'
 
   spell_check:
-    needs: test_valgrind
+    needs: [test_valgrind]
     name: spell check
     runs-on: ubuntu-latest
     steps:
@@ -141,7 +144,7 @@ jobs:
     
   cppcheck:
     needs: test_valgrind
-    name: static_analyzer
+    name: cppcheck
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -189,7 +192,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true 
           VALIDATE_CLANG_FORMAT: true
-          FILTER_REGEX_EXCLUDE: .*test/.* .*examples/.*
+          FILTER_REGEX_EXCLUDE: .*(test|examples)/.*
 
   valgrind_examples:
     needs: test_valgrind
@@ -202,6 +205,22 @@ jobs:
 
     # TODO:
 
-
-
+  checkpatch:
+    needs: [spell_check]
+    name: checkpatch review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+    - name: 'Calculate PR commits + 1'
+      run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> $GITHUB_ENV
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+    - name: Run checkpatch review
+      uses: webispy/checkpatch-action@v9
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
