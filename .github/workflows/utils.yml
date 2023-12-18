@@ -186,6 +186,7 @@ jobs:
       run: |
         gcovr --cobertura=./test/docs/coverage_pr.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
         pycobertura diff test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 . > coverage_diff.txt
+        echo '```' | cat - ./coverage_diff.txt | echo -e '\n```' > temp_file && mv temp_file ./coverage_diff.txt
       continue-on-error: true
     
     - name: PR comment with file
