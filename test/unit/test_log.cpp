@@ -46,10 +46,10 @@ TEST_CASE("log level 3", "[log]")
 }
 TEST_CASE("log level 4", "[log]")
 {
-    // char env_var[] = "VACCEL_DEBUG_LEVEL=4";
-    // putenv(env_var);
-    // int ret = vaccel_log_init();
-    // REQUIRE(ret == VACCEL_OK);
-    // ret = vaccel_log_shutdown();
-    // REQUIRE(ret == VACCEL_OK);
+    char env_var[] = "VACCEL_DEBUG_LEVEL=4";
+    putenv(env_var);
+    int ret = vaccel_log_init();
+    REQUIRE(ret == VACCEL_OK);
+    ret = vaccel_log_shutdown();
+    REQUIRE(ret == VACCEL_OK);
 }
