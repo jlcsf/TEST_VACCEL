@@ -15,18 +15,17 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
-          
+
       - name: Install dependencies
         id: install_dependencies
         run : sudo apt-get install -y lcov cmake gcc g++ libclang-dev valgrind
-
+      
       - name: Run tests
         run: |
           mkdir build
           cd build
-          cmake ../ -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON
-          make
-          make test
+          cmake ../ -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DBUILD_EXAMPLES=ON -DCMAKE_CXX_COMPILER=g++-12 
+          make && make test
       
       - name: Run valgrind tests
         run: |
@@ -140,7 +139,7 @@ jobs:
         codespell ./src
         codespell ./test
     
-  static_analyzer_cppcheck:
+  cppcheck:
     needs: test_valgrind
     name: static_analyzer
     runs-on: ubuntu-latest
@@ -165,9 +164,9 @@ jobs:
     - name : Run cppcheck in plugins
       run : cppcheck --enable=style plugins
 
-  Linter:
+  linter:
     needs: test_valgrind
-    name: Lint
+    name: linter
     runs-on: ubuntu-latest
 
     permissions:
@@ -190,13 +189,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true 
           VALIDATE_CLANG_FORMAT: true
-          FILTER_REGEX_EXCLUDE: .*test/.* ./examples/.*
+          FILTER_REGEX_EXCLUDE: .*test/.* .*examples/.*
 
+  valgrind_examples:
+    needs: test_valgrind
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
-
-
-
-
+    # TODO:
 
 
 
