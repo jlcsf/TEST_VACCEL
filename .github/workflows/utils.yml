@@ -180,17 +180,16 @@ jobs:
         make
         make test ARGS="-V"
         cd ../
-        gcovr --gcov-executable gcov-12 -s -o test/docs/temp.txt --txt -e "build/_deps/*" |& tee test/docs/coverage_pr.txt
-        rm test/docs/temp.txt
       shell: bash
 
-    - name: Calculate coverage difference
+    - name: Calculate coverage 
       run: |
-        colordiff -u test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt
-      shell: bash
+        gcovr --cobertura=./test/docs/coverage_pr.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
+        pycobertura diff test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 . > coverage_diff.txt
+      continue-on-error: true
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
       with:
-        filePath: ./test/docs/coverage_diff.txt
+        filePath: ./coverage_diff.txt
 
