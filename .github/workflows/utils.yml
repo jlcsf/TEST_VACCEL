@@ -184,7 +184,7 @@ jobs:
         make
         make test ARGS="-V"
         cd ../
-        gcovr --gcov-executable gcov-12 -s -o --txt -e "build/_deps/*" |& tee test/docs/coverage_pr.txt
+        gcovr --gcov-executable gcov-12 -s -o test/docs/temp.txt --txt -e "build/_deps/*" |& tee test/docs/coverage_pr.txt
         rm test/docs/temp.txt
       shell: bash
 
