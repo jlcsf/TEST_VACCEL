@@ -181,13 +181,10 @@ jobs:
         make test ARGS="-V"
         cd ../
         gcovr --gcov-executable gcov-12 -s -o test/docs/temp.txt --txt -e "build/_deps/*" |& tee test/docs/coverage_pr.txt
-        rm test/docs/temp.txt
       shell: bash
 
     - name: Calculate coverage difference
-      run: |
-        diff --color=always test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt 
-      shell: bash
+      run: diff --color=always test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt 
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
