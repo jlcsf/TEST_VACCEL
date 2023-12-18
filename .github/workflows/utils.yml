@@ -1,10 +1,6 @@
 name: Utility
 
-on:
-  workflow_run:
-    workflows: ["CI"]
-    types:
-      - completed
+on: [pull_request]
 
 jobs:
 
@@ -190,7 +186,7 @@ jobs:
 
     - name: Calculate coverage difference
       run: |
-        diff --color=always test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt 
+        colordiff -u test/docs/coverage_main.txt test/docs/coverage_pr.txt > test/docs/coverage_diff.txt
       shell: bash
     
     - name: PR comment with file
