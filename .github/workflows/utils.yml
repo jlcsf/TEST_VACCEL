@@ -170,7 +170,7 @@ jobs:
         pip install --upgrade gcovr
         pip install pycobertura
 
-    - name: Run Coverage on PR branch
+    - name: Build and make tests for coverage (PR)
       id: run_coverage_pr
       run: |
         mkdir build
@@ -180,13 +180,33 @@ jobs:
         make test ARGS="-V"
         cd ../
       shell: bash
-
+    
     - name: Calculate coverage 
       run: |
         gcovr --cobertura=./test/docs/coverage_pr.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
-        pycobertura diff test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 . > coverage_diff.txt
-        echo '```' > temp_file && cat ./coverage_diff.txt >> temp_file && echo -e '\n```' >> temp_file && mv temp_file ./coverage_diff.txt
+
       continue-on-error: true
+    
+    - name: Build and make tests for coverage (main)
+      id: run_coverage_main
+      run: |
+        mkdir main_vaccelrt
+        cd main_vaccelrt
+        git clone https://github.com/cloudkernels/vaccelrt --recursive
+        cd vaccelrt
+        mkdir build
+        cd build
+        cmake ${{github.workspace}}/main_vaccelrt -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DGCOV_EXECUTABLE=gcov-12
+        make
+        make test
+        cd ../
+        gcovr --cobertura=./test/docs/coverage_main.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
+    
+    - name: Calculate coverage diff
+      run: |
+        pycobertura diff main_vaccelrt/test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 . > coverage_diff.txt
+        echo '```' > temp_file && cat ./coverage_diff.txt >> temp_file && echo -e '\n```' >> temp_file && mv temp_file ./coverage_diff.txt
+        rm main_vaccelrt -rf
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
