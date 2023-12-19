@@ -192,7 +192,10 @@ jobs:
         cd main_vaccelrt
         git clone https://github.com/jlcsf/feat_vaccel_testing --recursive
         cd feat_vaccel_testing
+        cd ./src/
         patch < ./test/docs/coverage.patch
+        patch < ../test/docs/coverage.patch
+        cd ../
         mkdir build
         cd build
         cmake ../ -DBUILD_PLUGIN_NOOP=ON -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_C_COMPILER=gcc-12 -DGCOV_EXECUTABLE=gcov-12
