@@ -5,6 +5,7 @@ on: [pull_request]
 jobs:
 
   test_valgrind:
+    needs: [CI]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -100,7 +101,6 @@ jobs:
     permissions:
       contents: read
       packages: read
-      # To report GitHub Actions status checks
       statuses: write
 
     steps:
