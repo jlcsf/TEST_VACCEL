@@ -184,8 +184,6 @@ jobs:
     - name: Calculate coverage 
       run: |
         gcovr --cobertura=./test/docs/coverage_pr.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
-
-      continue-on-error: true
     
     - name: Build and make tests for coverage (main)
       id: run_coverage_main
@@ -207,6 +205,7 @@ jobs:
         pycobertura diff main_vaccelrt/test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 . > coverage_diff.txt
         echo '```' > temp_file && cat ./coverage_diff.txt >> temp_file && echo -e '\n```' >> temp_file && mv temp_file ./coverage_diff.txt
         rm main_vaccelrt -rf
+      continue-on-error: true
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
