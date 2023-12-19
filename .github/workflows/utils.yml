@@ -113,7 +113,6 @@ jobs:
         uses: super-linter/super-linter@v5
         env:
           DEFAULT_BRANCH: main
-          # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DISABLE_ERRORS: true 
           VALIDATE_CLANG_FORMAT: true
