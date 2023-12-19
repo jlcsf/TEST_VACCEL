@@ -6,7 +6,6 @@ workflow_call:
 jobs:
 
   test_valgrind:
-    needs: [${{github.workspace}}/.github/workflows/CI.yml]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
