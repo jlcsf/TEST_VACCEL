@@ -117,6 +117,5 @@ jobs:
         ARCHITECTURE: ${{ matrix.archconfig }}
   
   utils:
-    needs: [test]
-    call-workflow:
       uses: ./.github/workflows/utils.yml
+      needs: [test]
