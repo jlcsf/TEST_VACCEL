@@ -190,7 +190,7 @@ jobs:
       run: |
         mkdir main_vaccelrt
         cd main_vaccelrt
-        git clone https://github.com/cloudkernels/vaccelrt --recursive
+        git clone https://github.com/jlcsf/feat_vaccel_testing --recursive
         cd vaccelrt
         mkdir build
         cd build
