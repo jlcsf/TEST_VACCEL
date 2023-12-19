@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
 
   test_valgrind:
-    needs: [CI]
+    needs: [${{github.workspace}}/.github/workflows/CI.yml]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
