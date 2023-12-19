@@ -115,3 +115,8 @@ jobs:
       shell: bash
       env:
         ARCHITECTURE: ${{ matrix.archconfig }}
+  
+  utils:
+    needs: [test]
+    call-workflow:
+      uses: ./.github/workflows/utils.yml
