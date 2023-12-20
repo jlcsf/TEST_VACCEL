@@ -147,7 +147,7 @@ jobs:
       uses: webispy/checkpatch-action@v9
 
   coverage_diff:
-    needs: [check_patch, spell_check]
+    needs: [checkpatch, spell_check]
     runs-on: ubuntu-latest
     outputs:
       commit_hash: ${{ steps.commit-and-push.outputs.commit_hash }}
