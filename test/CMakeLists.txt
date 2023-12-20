@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 3.15)
 project(VACCEL_TEST CXX)
 
-include(FetchContent)
-FetchContent_Declare(
-    Catch2
-    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG        v3.4.0
-)
-FetchContent_MakeAvailable(Catch2)
+# Include(FetchContent)
 
+# FetchContent_Declare(
+#   Catch2
+#   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+#   GIT_TAG        v2.13.9 # or a later release
+# )
+
+# FetchContent_MakeAvailable(Catch2)
 set(COMMON_COMPILE_OPTIONS -Wall -Wextra -g -ggdb --coverage)
+add_library(tests-main STATIC main.cpp)
 
 # Function to simplify adding tests
 function(add_test_target_core TARGET_NAME SOURCE_FILE)
@@ -22,7 +24,7 @@ function(add_test_target_core TARGET_NAME SOURCE_FILE)
             ./fff
     )
     target_compile_options(${TARGET_NAME} PRIVATE ${COMMON_COMPILE_OPTIONS})
-    target_link_libraries(${TARGET_NAME} PRIVATE Catch2::Catch2WithMain vaccel gcov --coverage)
+    target_link_libraries(${TARGET_NAME} PRIVATE vaccel tests-main gcov --coverage)
     add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 endfunction()
 
@@ -38,7 +40,7 @@ function(add_test_target_api TARGET_NAME SOURCE_FILE)
             ../src/resources
     )
     target_compile_options(${TARGET_NAME} PRIVATE ${COMMON_COMPILE_OPTIONS})
-    target_link_libraries(${TARGET_NAME} PRIVATE Catch2::Catch2WithMain vaccel gcov --coverage)
+    target_link_libraries(${TARGET_NAME} PRIVATE vaccel tests-main gcov --coverage)
     add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
 endfunction()
 
