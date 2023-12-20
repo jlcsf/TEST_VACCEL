@@ -1,11 +1,8 @@
-name: Coverage
+name: coverage_upload
 
 on:
-  pull_request:
-    types:
-      - closed
+  workflow_call:
 
-  workflow_dispatch:
 
 jobs:
   coverage:
@@ -47,18 +44,11 @@ jobs:
     - name: Generate coverage report
       run: gcovr --cobertura --gcov-executable gcov-12 -o ${{github.workspace}}/test/docs/coverage.xml --print-summary -e "build/_deps/*"
       shell: bash
-
-    - name: Generate new XML file
-      run: gcovr --cobertura=./test/docs/coverage_main.xml --gcov-executable gcov-12 -s -e "build/_deps/*"
-      shell: bash
-    
+  
     - name: Produce markdown file
       run: pycobertura show ${{github.workspace}}/test/docs/coverage.xml --format markdown --output ${{github.workspace}}/test/docs/coverage/coverage.md
       shell: bash
 
-    - name: Remove xml file
-      run: rm ${{github.workspace}}/test/docs/coverage.xml 
-        
     - name: Configure Git
       run: |
         echo "Setting up git configuration..."
