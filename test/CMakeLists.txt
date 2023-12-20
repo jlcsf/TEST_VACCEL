@@ -77,6 +77,18 @@ foreach(TEST_NAME ${TESTS_API})
     add_test_target_api(${TEST_NAME} ${TEST_NAME}.cpp)
 endforeach()
 
+# Add fast compile to catch
+
+foreach(TEST_NAME ${TESTS_CORE})
+    target_compile_definitions(${TEST_NAME} PRIVATE CATCH_CONFIG_FAST_COMPILE CATCH_CONFIG_DISABLE_MATCHERS)
+    target_precompile_headers(${TEST_NAME} PRIVATE catch2/catch.hpp)
+endforeach()
+
+foreach(TEST_NAME ${TESTS_API})
+    target_compile_definitions(${TEST_NAME} PRIVATE CATCH_CONFIG_FAST_COMPILE CATCH_CONFIG_DISABLE_MATCHERS)
+    target_precompile_headers(${TEST_NAME} PRIVATE catch2/catch.hpp)
+endforeach()
+
 # Set properties for specific tests
 
 set_tests_properties(
@@ -99,3 +111,4 @@ set_tests_properties(
     ENVIRONMENT "VACCEL_BACKENDS=${CMAKE_BINARY_DIR}/plugins/noop/libvaccel-noop.so;VACCEL_DEBUG_LEVEL=4"
     ARGS=--order rand --warn NoAssertions
 )
+
