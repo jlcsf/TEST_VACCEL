@@ -3,6 +3,7 @@
 extern "C" {
 #include "error.h"
 #include "list.h"
+#include "plugin.h"
 }
 
 #include <dlfcn.h>
