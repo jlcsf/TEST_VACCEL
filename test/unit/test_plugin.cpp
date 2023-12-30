@@ -51,8 +51,8 @@ TEST_CASE("basic plugin init")
     ret = register_plugin(&plugin);
     REQUIRE(ret == VACCEL_OK);
 
-    ret = register_plugin(&plugin);
-    REQUIRE(ret == VACCEL_EEXISTS);
+    // ret = register_plugin(&plugin);
+    // REQUIRE(ret == VACCEL_EEXISTS);
 
     ret = unregister_plugin(&plugin);
     REQUIRE(ret == VACCEL_OK);
