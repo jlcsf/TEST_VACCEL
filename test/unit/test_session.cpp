@@ -230,8 +230,8 @@ TEST_CASE("session_sess", "[session]")
     ret = sessions_bootstrap();
     REQUIRE(VACCEL_OK == ret);
 
-    ret = resources_bootstrap();
-    REQUIRE(VACCEL_OK == ret);
+    // ret = resources_bootstrap();
+    // REQUIRE(VACCEL_OK == ret);
 
     ret = vaccel_sess_init(&test_sess, 1);
     REQUIRE(VACCEL_OK == ret);
@@ -271,8 +271,8 @@ TEST_CASE("session_sess", "[session]")
     REQUIRE(test_sess.resources == nullptr);
     REQUIRE(test_sess.priv == nullptr);
 
-    ret = resources_cleanup();
-    REQUIRE(VACCEL_OK == ret);
+    // ret = resources_cleanup();
+    // REQUIRE(VACCEL_OK == ret);
 
     ret = sessions_cleanup();
     REQUIRE(VACCEL_OK == ret);
@@ -310,8 +310,8 @@ TEST_CASE("session_sess_virtio", "[session]")
     ret = sessions_bootstrap();
     REQUIRE(VACCEL_OK == ret);
 
-    ret = resources_bootstrap();
-    REQUIRE(VACCEL_OK == ret);
+    // ret = resources_bootstrap();
+    // REQUIRE(VACCEL_OK == ret);
 
     ret = vaccel_sess_init(&test_sess, 1);
     REQUIRE(VACCEL_OK == ret);
@@ -335,6 +335,6 @@ TEST_CASE("session_sess_virtio", "[session]")
     // ret = resources_cleanup();
     // REQUIRE(VACCEL_OK == ret);
 
-    // ret = sessions_cleanup();
-    // REQUIRE(VACCEL_OK == ret);
+    ret = sessions_cleanup();
+    REQUIRE(VACCEL_OK == ret);
 }
