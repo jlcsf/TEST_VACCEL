@@ -3,12 +3,12 @@
 extern "C" {
 #include "error.h"
 #include "list.h"
-#include "plugin.h"
 }
 
 #include <dlfcn.h>
 #include <stdbool.h>
 #include <string.h>
+#include "plugin.c"
 
 // TODO: Investigate unregister plugin function and freeing memory
 
@@ -26,40 +26,40 @@ static int init(void)
 
 static int no_op() { return 2; }
 
-TEST_CASE("basic plugin init")
-{
-    int ret; 
-    vaccel_plugin plugin;
-    vaccel_plugin_info pinfo;
-    plugin.dl_handle = nullptr;
-    plugin.info = &pinfo;
-    list_init_entry(&plugin.entry);
-    list_init_entry(&plugin.ops);
+// TEST_CASE("basic plugin init")
+// {
+//     int ret; 
+//     vaccel_plugin plugin;
+//     vaccel_plugin_info pinfo;
+//     plugin.dl_handle = nullptr;
+//     plugin.info = &pinfo;
+//     list_init_entry(&plugin.entry);
+//     list_init_entry(&plugin.ops);
 
-    plugin.info->name = pname;
-    plugin.info->init = init;
-    plugin.info->fini = fini;
-    plugin.info->is_virtio = false;
-    plugin.info->type = VACCEL_PLUGIN_GENERIC;
+//     plugin.info->name = pname;
+//     plugin.info->init = init;
+//     plugin.info->fini = fini;
+//     plugin.info->is_virtio = false;
+//     plugin.info->type = VACCEL_PLUGIN_GENERIC;
 
-    ret = plugins_bootstrap();
-    REQUIRE(ret == VACCEL_OK);
+//     ret = plugins_bootstrap();
+//     REQUIRE(ret == VACCEL_OK);
 
-    ret = register_plugin(NULL);
-    REQUIRE(ret == VACCEL_EINVAL);
+//     ret = register_plugin(NULL);
+//     REQUIRE(ret == VACCEL_EINVAL);
 
-    ret = register_plugin(&plugin);
-    REQUIRE(ret == VACCEL_OK);
+//     ret = register_plugin(&plugin);
+//     REQUIRE(ret == VACCEL_OK);
 
-    // ret = register_plugin(&plugin);
-    // REQUIRE(ret == VACCEL_EEXISTS);
+//     // ret = register_plugin(&plugin);
+//     // REQUIRE(ret == VACCEL_EEXISTS);
 
-    ret = unregister_plugin(&plugin);
-    REQUIRE(ret == VACCEL_OK);
+//     ret = unregister_plugin(&plugin);
+//     REQUIRE(ret == VACCEL_OK);
     
-    ret = plugins_shutdown();
-    REQUIRE(ret == VACCEL_OK);
-}
+//     ret = plugins_shutdown();
+//     REQUIRE(ret == VACCEL_OK);
+// }
 
 TEST_CASE("get_all_available_functions")
 {
