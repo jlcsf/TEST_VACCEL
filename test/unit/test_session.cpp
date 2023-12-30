@@ -13,18 +13,12 @@ extern "C" {
 #include "log.h"
 #include "plugin.h"
 #include "resources.h"
-#include "session.h"
 #include "utils.h"
 FAKE_VALUE_FUNC(struct vaccel_plugin*, get_virtio_plugin);
 FAKE_VALUE_FUNC(struct vaccel_session*, sess_free);
 }
 
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include "session.c"
 
 #define MAX_VACCEL_SESSIONS 1024
 

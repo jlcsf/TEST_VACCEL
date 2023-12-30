@@ -77,7 +77,7 @@ int vaccel_sess_register(struct vaccel_session *sess,
 		return VACCEL_EINVAL;
 
 	struct session_resources *resources = sess->resources;
-	struct registered_resource *container = malloc(sizeof(*container));
+	struct registered_resource *container = (struct registered_resource*)malloc(sizeof(*container));
 	if (!container)
 		return VACCEL_ENOMEM;
 
@@ -156,7 +156,7 @@ static int initialize_session_resources(struct vaccel_session *sess)
 	if (!sess)
 		return VACCEL_EINVAL;
 
-	struct session_resources *res = malloc(sizeof(*res));
+	struct session_resources *res = (struct session_resources*)malloc(sizeof(*res));
 	if (!res)
 		return VACCEL_ENOMEM;
 
