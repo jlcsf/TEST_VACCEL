@@ -200,7 +200,7 @@ void *get_plugin_op(enum vaccel_op_type op_type, unsigned int hint)
 
 	if (list_empty(&plugin_state.ops[op_type])) {
 		vaccel_warn("None of the loaded plugins implement %s",
-				vaccel_op_type(op_type));
+				vaccel_op_type_str(op_type));
 		return NULL;
 	}
 
