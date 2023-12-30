@@ -171,7 +171,7 @@ int register_plugin_function(struct vaccel_op *plugin_op)
 			&plugin_op->func_entry);
 
 	vaccel_debug("Registered function %s from plugin %s",
-			vaccel_op_type(plugin_op->type),
+			vaccel_op_type_str(plugin_op->type),
 			plugin->info->name);
 
 	return VACCEL_OK;
