@@ -10,16 +10,12 @@ extern "C" {
 #include "list.h"
 #include "log.h"
 #include "plugin.h"
-#include "resources.h"
 #include "utils.h"
 #include "vaccel.h"
 }
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
+#include "resources.c"
+
 
 // Mock cleanup function for resources
 int cleanup_resource_mock([[maybe_unused]] void* data) { return 0; }
@@ -189,5 +185,5 @@ TEST_CASE("find_resource_by_id", "[Resources]")
     result = resource_destroy(&test_res);
     REQUIRE(result == VACCEL_OK);
 
-    // REQUIRE(resources_cleanup() == VACCEL_OK);
+    REQUIRE(resources_cleanup() == VACCEL_OK);
 }
