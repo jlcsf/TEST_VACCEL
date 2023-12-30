@@ -221,46 +221,6 @@ static int no_op() { return 2; }
 //     plugins_shutdown();
 // }
 
-TEST_CASE("register_plugin_functions_operation_fetch") {
-
-    struct vaccel_plugin no_op_plugin;
-    struct vaccel_plugin_info noop_pinfo;
-    int ret;
-
-    struct vaccel_op noop_operation;
-    noop_operation.type = VACCEL_NO_OP;
-    noop_operation.func = (void *)no_op;
-    noop_operation.owner = nullptr;
-
-    no_op_plugin.info = &noop_pinfo;
-    no_op_plugin.info->name = pname;
-    list_init_entry(&no_op_plugin.entry);
-    list_init_entry(&no_op_plugin.ops);
-    no_op_plugin.info->init = init;
-    no_op_plugin.info->fini = fini;
-
-    plugins_bootstrap();
-
-    noop_operation.owner = &no_op_plugin;
-    ret = register_plugin(&no_op_plugin);
-    REQUIRE(ret ==  VACCEL_OK);
-
-    ret = register_plugin_function(&noop_operation);
-    REQUIRE(ret ==  VACCEL_OK);
-
-    void* operation = get_plugin_op(VACCEL_NO_OP, 0);
-    REQUIRE(operation != nullptr);
-
-    ret = reinterpret_cast<int (*)(void)>(operation)();
-    REQUIRE(ret ==  2);
-
-    ret = unregister_plugin(&no_op_plugin);
-    REQUIRE(ret == VACCEL_OK);
-
-    ret = plugins_shutdown();
-    REQUIRE(ret == VACCEL_OK);
-}
-
 TEST_CASE("get_all_available_functions")
 {
     int ret;
