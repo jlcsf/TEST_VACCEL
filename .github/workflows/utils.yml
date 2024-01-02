@@ -61,9 +61,9 @@ jobs:
           LD_LIBRARY_PATH: ${{github.workspace}}/build/src/libvaccel.so
           VACCEL_BACKENDS: ${{github.workspace}}/build/plugins/noop/libvaccel-noop.so
           VACCEL_DEBUG_LEVEL: 4
-        run : /
+        run : |
           cd build/examples
-          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./classify ../../examples/images/example.jpg 1
+          valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./classify ../../examples/images/example.jpg 1 /
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./classify_generic ../../examples/images/example.jpg 1
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./detect ../../examples/images/example.jpg 1
           valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./detect_generic ../../examples/images/example.jpg 1
