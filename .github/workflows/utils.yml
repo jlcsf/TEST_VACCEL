@@ -104,7 +104,6 @@ jobs:
         codespell ./test
     
   cppcheck:
-    needs: test_valgrind
     name: cppcheck
     runs-on: ubuntu-latest
     steps:
@@ -129,7 +128,6 @@ jobs:
       run : cppcheck --enable=style plugins
 
   linter:
-    needs: test_valgrind
     name: linter
     runs-on: ubuntu-latest
 
