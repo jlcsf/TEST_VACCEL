@@ -26,7 +26,7 @@ static int init(void)
 }
 
 static int no_op() { return 2; }
-
+static int exec_op() { return 3; }
 
 TEST_CASE("get_all_available_functions")
 {
@@ -73,6 +73,67 @@ TEST_CASE("get_all_available_functions")
 
     ret = unregister_plugin(NULL);
     REQUIRE(ret == VACCEL_EINVAL);
+
+    ret = plugins_shutdown();
+    REQUIRE(ret == VACCEL_OK);
+}
+
+TEST_CASE("register numberous function")
+{
+    int ret;
+    vaccel_plugin plugin;
+    vaccel_plugin_info pinfo;
+    plugin.dl_handle = nullptr;
+    plugin.info = &pinfo;
+    list_init_entry(&plugin.entry);
+    list_init_entry(&plugin.ops);
+
+    plugin.info->name = pname;
+    plugin.info->init = init;
+    plugin.info->fini = fini;
+    plugin.info->is_virtio = false;
+    plugin.info->type = VACCEL_PLUGIN_GENERIC;
+
+    size_t operation_array_size = 2;
+
+    vaccel_op operation1;
+    operation1.type = VACCEL_NO_OP;
+    operation1.func = (void*)no_op;
+    operation1.owner = &plugin;
+    list_init_entry(&operation1.plugin_entry);
+    list_init_entry(&operation1.func_entry);
+
+    vaccel_op operation2;
+    operation2.type = VACCEL_EXEC;
+    operation2.func = (void*)exec_op;
+    operation2.owner = &plugin;
+    list_init_entry(&operation2.plugin_entry);
+    list_init_entry(&operation2.func_entry);
+
+    vaccel_op operation_array[2] = {operation1, operation2};
+
+    ret = plugins_bootstrap();
+    REQUIRE(ret == VACCEL_OK);
+
+    ret = register_plugin(&plugin);
+    REQUIRE(ret == VACCEL_OK);
+
+    ret = register_plugin_functions(operation_array, operation_array_size);
+    REQUIRE(ret == VACCEL_OK);
+
+    void* operation;
+    operation = get_plugin_op(VACCEL_EXEC, 0);
+    REQUIRE(operation != nullptr);
+    ret = reinterpret_cast<int (*)(void)>(operation)();
+    REQUIRE(ret == 3);
+
+    operation = get_plugin_op(VACCEL_NO_OP, 0);
+    REQUIRE(operation !=  nullptr);
+    ret = reinterpret_cast<int (*)(void)>(operation)();
+    REQUIRE(ret == 2);
+
+    ret = unregister_plugin(&plugin);
+    REQUIRE(ret == VACCEL_OK);
 
     ret = plugins_shutdown();
     REQUIRE(ret == VACCEL_OK);
