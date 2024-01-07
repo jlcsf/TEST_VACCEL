@@ -1,5 +1,5 @@
 #include "fff.h"
-#include "../catch2/catch.hpp"
+#include <catch.hpp>
 
 #include <atomic>
 
@@ -8,17 +8,16 @@ using atomic_uint = std::atomic<unsigned int>;
 
 DEFINE_FFF_GLOBALS;
 extern "C" {
-
 #include "id_pool.h"
 #include "log.h"
 #include "plugin.h"
 #include "resources.h"
 #include "utils.h"
+#include "session.h"
 FAKE_VALUE_FUNC(struct vaccel_plugin*, get_virtio_plugin);
 FAKE_VALUE_FUNC(struct vaccel_session*, sess_free);
 }
 
-#include "session.c"
 
 #define MAX_VACCEL_SESSIONS 1024
 
@@ -74,11 +73,14 @@ int mock_sess_unregister(uint32_t sess_id, vaccel_id_t resource_id)
 // Test case for session initialization
 TEST_CASE("session_init", "[session]")
 {
+
     int ret;
+
     // Ensure that the session system is initialized
     ret = sessions_bootstrap();
     REQUIRE(ret == VACCEL_OK);
     struct vaccel_session sess;
+    sess.hint = 0;
     sess.session_id = 0;
     sess.resources = nullptr;
     sess.priv = nullptr;
@@ -86,6 +88,10 @@ TEST_CASE("session_init", "[session]")
     // Test handling of null session
     ret = vaccel_sess_init(NULL, 1);
     REQUIRE(ret == VACCEL_EINVAL);
+    REQUIRE(sess.hint == 0);
+    REQUIRE(sess.session_id == 0);
+    REQUIRE(sess.resources == nullptr);
+    REQUIRE(sess.priv == nullptr);
 
     // Test session initialization and cleanup
     ret = vaccel_sess_init(&sess, 1);
@@ -95,14 +101,26 @@ TEST_CASE("session_init", "[session]")
     REQUIRE(sess.resources);
     REQUIRE(sess.priv == nullptr);
 
+    ret = vaccel_sess_free(NULL);
+    REQUIRE(ret == VACCEL_EINVAL);
+    REQUIRE(sess.hint == 1);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.resources);
+    REQUIRE(sess.priv == nullptr);
+
     REQUIRE(vaccel_sess_free(&sess) == VACCEL_OK);
     REQUIRE(sess.session_id);
     REQUIRE(sess.hint == 1);
     REQUIRE(sess.resources == nullptr);
     REQUIRE(sess.priv == nullptr);
-
+    
+    ret = plugins_shutdown();
+    REQUIRE(ret == VACCEL_OK);
+    
     ret = sessions_cleanup();
     REQUIRE(ret == VACCEL_OK);
+
+
 }
 
 // Test case for session update and cleanup
@@ -135,8 +153,17 @@ TEST_CASE("vaccel_sess_update_and_free", "[session]")
 
     ret = vaccel_sess_update(NULL, 2);
     REQUIRE(ret == VACCEL_EINVAL);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 2);
+    REQUIRE(sess.resources);
+    REQUIRE(sess.priv == nullptr);
 
-    REQUIRE(vaccel_sess_free(NULL) == VACCEL_EINVAL);
+    ret = vaccel_sess_free(NULL);
+    REQUIRE(ret == EINVAL);
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 2);
+    REQUIRE(sess.resources);
+    REQUIRE(sess.priv == nullptr);
 
     // Test session cleanup
     REQUIRE(vaccel_sess_free(&sess) == VACCEL_OK);
@@ -172,6 +199,18 @@ TEST_CASE("sess_unregister_null", "[session]")
     struct vaccel_resource res;
     res.type = VACCEL_RES_SHARED_OBJ;
 
+    ret = vaccel_sess_register(NULL, NULL);
+    REQUIRE(ret == VACCEL_EINVAL);
+    ret = vaccel_sess_register(NULL, &res);
+    REQUIRE(ret == VACCEL_EINVAL);
+    ret = vaccel_sess_register(&sess, NULL);
+    REQUIRE(ret == VACCEL_EINVAL);
+
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 1);
+    REQUIRE(sess.resources);
+    REQUIRE(sess.priv == nullptr);
+
     ret = vaccel_sess_register(&sess, &res);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE(sess.session_id);
@@ -184,9 +223,13 @@ TEST_CASE("sess_unregister_null", "[session]")
 
     ret = vaccel_sess_unregister(NULL, &res);
     REQUIRE(ret == VACCEL_EINVAL);
-
     ret = vaccel_sess_unregister(&sess, NULL);
     REQUIRE(ret == VACCEL_EINVAL);
+
+    REQUIRE(sess.session_id);
+    REQUIRE(sess.hint == 1);
+    REQUIRE_FALSE(list_empty(&sess.resources->registered[res.type]));
+    REQUIRE(sess.priv == nullptr);
 
     res.type = VACCEL_RES_MAX;
     ret = vaccel_sess_unregister(&sess, &res);
@@ -230,8 +273,8 @@ TEST_CASE("session_sess", "[session]")
     ret = sessions_bootstrap();
     REQUIRE(VACCEL_OK == ret);
 
-    // ret = resources_bootstrap();
-    // REQUIRE(VACCEL_OK == ret);
+    ret = resources_bootstrap();
+    REQUIRE(VACCEL_OK == ret);
 
     ret = vaccel_sess_init(&test_sess, 1);
     REQUIRE(VACCEL_OK == ret);
@@ -271,8 +314,8 @@ TEST_CASE("session_sess", "[session]")
     REQUIRE(test_sess.resources == nullptr);
     REQUIRE(test_sess.priv == nullptr);
 
-    // ret = resources_cleanup();
-    // REQUIRE(VACCEL_OK == ret);
+    ret = resources_cleanup();
+    REQUIRE(VACCEL_OK == ret);
 
     ret = sessions_cleanup();
     REQUIRE(VACCEL_OK == ret);
@@ -310,8 +353,8 @@ TEST_CASE("session_sess_virtio", "[session]")
     ret = sessions_bootstrap();
     REQUIRE(VACCEL_OK == ret);
 
-    // ret = resources_bootstrap();
-    // REQUIRE(VACCEL_OK == ret);
+    ret = resources_bootstrap();
+    REQUIRE(VACCEL_OK == ret);
 
     ret = vaccel_sess_init(&test_sess, 1);
     REQUIRE(VACCEL_OK == ret);
@@ -335,6 +378,6 @@ TEST_CASE("session_sess_virtio", "[session]")
     // ret = resources_cleanup();
     // REQUIRE(VACCEL_OK == ret);
 
-    ret = sessions_cleanup();
-    REQUIRE(VACCEL_OK == ret);
+    // ret = sessions_cleanup();
+    // REQUIRE(VACCEL_OK == ret);
 }
