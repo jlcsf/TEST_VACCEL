@@ -1,5 +1,5 @@
 #include <atomic>
-#include "../catch2/catch.hpp"
+#include <catch.hpp>
 
 using atomic_int = std::atomic<int>;
 using atomic_uint = std::atomic<unsigned int>;
@@ -15,7 +15,6 @@ extern "C" {
 }
 
 #include "resources.c"
-
 
 // Mock cleanup function for resources
 int cleanup_resource_mock([[maybe_unused]] void* data) { return 0; }
@@ -50,6 +49,9 @@ TEST_CASE("destroy_OK", "[Resources]")
     {
         ret = resource_new(NULL, test_type, test_data, cleanup_res_test);
         REQUIRE(ret == VACCEL_EINVAL);
+
+        ret = resource_destroy(NULL);
+        REQUIRE(ret == VACCEL_EINVAL);
     }
 
     // Test creation and destruction of a valid resource
@@ -66,6 +68,7 @@ TEST_CASE("destroy_OK", "[Resources]")
         REQUIRE(res.rundir == NULL);
 
         ret = resource_destroy(&res);
+        REQUIRE(ret == VACCEL_OK);
 
         REQUIRE(res.id == 1);
         REQUIRE(res.type == VACCEL_RES_TF_MODEL);
@@ -74,10 +77,11 @@ TEST_CASE("destroy_OK", "[Resources]")
         REQUIRE(res.refcount == 0);
         REQUIRE(res.rundir == NULL);
 
-        REQUIRE(ret == VACCEL_OK);
+
     }
 
-    REQUIRE(resources_cleanup() == VACCEL_OK);
+    ret = resources_cleanup();
+    REQUIRE(ret == VACCEL_OK);
 }
 
 // Test case for resource creation and rundir creation
@@ -127,7 +131,8 @@ TEST_CASE("Resource Create Rundir", "[Resources]")
     REQUIRE(res.refcount == 0);
     REQUIRE_FALSE(res.rundir == NULL);
 
-    REQUIRE(resources_cleanup() == VACCEL_OK);
+    ret = resources_cleanup();
+    REQUIRE(ret == VACCEL_OK);
 }
 
 // Test case for finding a resource by ID (failure case)
@@ -145,19 +150,19 @@ TEST_CASE("find_resource_by_id_fail", "[Resources]")
 // Test case for finding a resource by ID (success case)
 TEST_CASE("find_resource_by_id", "[Resources]")
 {
-    int result;
+    int ret;
     struct vaccel_resource test_res;
     vaccel_resource_t test_type = VACCEL_RES_TF_MODEL;
     void* test_data = nullptr;
     int (*cleanup_res_test)(void*) = cleanup_resource_mock;
 
     // Ensure that the resource system is initialized
-    result = resources_bootstrap();
-    REQUIRE(result == VACCEL_OK);
+    ret = resources_bootstrap();
+    REQUIRE(ret == VACCEL_OK);
 
     // Create a test resource
-    result = resource_new(&test_res, test_type, test_data, cleanup_res_test);
-    REQUIRE(result == VACCEL_OK);
+    ret = resource_new(&test_res, test_type, test_data, cleanup_res_test);
+    REQUIRE(ret == VACCEL_OK);
 
     REQUIRE(test_res.id == 1);
     REQUIRE(test_res.type == VACCEL_RES_TF_MODEL);
@@ -170,7 +175,7 @@ TEST_CASE("find_resource_by_id", "[Resources]")
     struct vaccel_resource* result_resource = nullptr;
     vaccel_id_t id_to_find = 1;
 
-    int ret = resource_get_by_id(&result_resource, id_to_find);
+    ret = resource_get_by_id(&result_resource, id_to_find);
     REQUIRE(ret == VACCEL_OK);
     REQUIRE(result_resource != nullptr);
 
@@ -182,8 +187,46 @@ TEST_CASE("find_resource_by_id", "[Resources]")
     REQUIRE(result_resource->rundir == NULL);
 
     // Cleanup the test resource
-    result = resource_destroy(&test_res);
-    REQUIRE(result == VACCEL_OK);
+    ret = resource_destroy(&test_res);
+    REQUIRE(ret == VACCEL_OK);
 
-    REQUIRE(resources_cleanup() == VACCEL_OK);
+    REQUIRE(test_res.id == 1);
+    REQUIRE(test_res.type == VACCEL_RES_TF_MODEL);
+    REQUIRE(test_res.data == nullptr);
+    REQUIRE(list_empty(&test_res.entry));
+    REQUIRE(test_res.refcount == 0);
+    REQUIRE(test_res.rundir == NULL);
+
+    ret = resources_cleanup();
+    REQUIRE(ret == VACCEL_OK);
+
+}
+
+
+TEST_CASE("initialising with no resources bootstrapped")
+{
+    int ret;
+    struct vaccel_resource test_res;
+    vaccel_resource_t test_type = VACCEL_RES_TF_MODEL;
+    void* test_data = nullptr;
+    int (*cleanup_res_test)(void*) = cleanup_resource_mock;
+    struct vaccel_resource* result_resource = nullptr;
+    vaccel_id_t id_to_find = 1;
+
+    initialized = false;
+
+    ret = resource_new(&test_res, test_type, test_data, cleanup_res_test);
+    REQUIRE(ret == VACCEL_EPERM);
+
+    ret = resource_get_by_id(&result_resource, id_to_find);
+    REQUIRE(ret == VACCEL_EPERM);
+
+    ret = resource_destroy(&test_res);
+    REQUIRE(ret == VACCEL_EPERM);
+
+    ret = resource_create_rundir(NULL);
+    REQUIRE(ret == VACCEL_EINVAL);
+
+    ret = resources_cleanup();
+    REQUIRE(ret == VACCEL_OK);
 }

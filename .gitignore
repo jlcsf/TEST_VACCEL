@@ -15,6 +15,7 @@ _deps
 cscope.out
 build*
 **target
+coverage
 
 .cache
 .ccls-cache
