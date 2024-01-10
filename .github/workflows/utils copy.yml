@@ -1,9 +1,6 @@
-name: utils
+name: utilscopy
 
 on:
-  push:
-    branches:
-      - main
   workflow_call:
 
 jobs:
