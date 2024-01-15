@@ -1,11 +1,4 @@
-name: CI
-
-on:
-  pull_request:
-    branches:
-      - main
-
-
+name: CI_copy
   workflow_dispatch:
 
 jobs:
