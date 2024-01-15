@@ -230,8 +230,17 @@ jobs:
     
     - name: Calculate coverage diff
       run: |
-        pycobertura diff main_vaccelrt/feat_vaccel_testing/test/docs/coverage_main.xml test/docs/coverage_pr.xml > coverage_diff.txt -s1 ./main_vaccert/feat_vaccel_testing -s2 . --no-color -f markdown
+        pycobertura diff main_vaccelrt/feat_vaccel_testing/test/docs/coverage_main.xml test/docs/coverage_pr.xml > coverage_diff.txt --no-color --no-source -f markdown
         echo '```' > temp_file && cat ./coverage_diff.txt >> temp_file && echo -e '\n```' >> temp_file && mv temp_file ./coverage_diff.txt
+        echo "" >> coverage_diff.txt
+        echo "old coverage" >> coverage_diff.txt
+        echo "" >> coverage_diff.txt
+        gcovr -e "build/_deps/*" --txt=temp.txt -s >> coverage_diff.txt
+        echo "" >> coverage_diff.txt
+        echo "new coverage" >> coverage_diff.txt
+        echo "" >> coverage_diff.txt
+        cd main_vaccelrt/
+        gcovr -e "build/_deps/*" --txt=temp.txt -s >> ../coverage_diff.txt && cd ../
         rm main_vaccelrt -rf
       continue-on-error: true
     
