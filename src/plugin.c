@@ -38,7 +38,7 @@ static struct {
 	 * function
 	 */
 	list_t ops[VACCEL_FUNCTIONS_NR];
-} plugin_state ;
+} plugin_state = {0};
 
 static int check_plugin_info(const struct vaccel_plugin_info *pinfo)
 {
@@ -119,7 +119,7 @@ int unregister_plugin(struct vaccel_plugin *plugin)
 		return VACCEL_EINVAL;
 
 	if (!entry_linked(&plugin->entry)) {
-		//assert(0 && "Trying to unregister unknown plugin");
+		assert(0 && "Trying to unregister unknown plugin");
 		return VACCEL_ENOENT;
 	}
 
@@ -170,9 +170,9 @@ int register_plugin_function(struct vaccel_op *plugin_op)
 	list_add_tail(&plugin_state.ops[plugin_op->type],
 			&plugin_op->func_entry);
 
-	// vaccel_debug("Registered function %s from plugin %s",
-	// 		vaccel_op_type_str(plugin_op->type),
-	// 		plugin->info->name);
+	vaccel_debug("Registered function %s from plugin %s",
+			vaccel_op_type_str(plugin_op->type),
+			plugin->info->name);
 
 	return VACCEL_OK;
 }
@@ -199,8 +199,8 @@ void *get_plugin_op(enum vaccel_op_type op_type, unsigned int hint)
 	}
 
 	if (list_empty(&plugin_state.ops[op_type])) {
-		// vaccel_warn("None of the loaded plugins implement %s",
-		// 		vaccel_op_type_str(op_type));
+		vaccel_warn("None of the loaded plugins implement %s",
+				vaccel_op_type_str(op_type));
 		return NULL;
 	}
 
@@ -238,10 +238,10 @@ int get_available_plugins(enum vaccel_op_type op_type) {
 
         for_each_container_safe(opiter, tmp_op, &plugin_state.ops[op_type],
 			struct vaccel_op, func_entry) {
-		// vaccel_debug("Found implementation of %s in %s plugin type: %s",
-		// 		vaccel_op_type_str(opiter->type),
-		// 		opiter->owner->info->name,
-		// 		vaccel_plugin_type_str(opiter->owner->info->type));
+		vaccel_debug("Found implementation of %s in %s plugin type: %s",
+				vaccel_op_type_str(opiter->type),
+				opiter->owner->info->name,
+				vaccel_plugin_type_str(opiter->owner->info->type));
         }
 	return 0;
 }

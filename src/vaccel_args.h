@@ -12,26 +12,9 @@
  * limitations under the License.
  */
 
-#ifndef __VACCEL_H__
-#define __VACCEL_H__
+#ifndef __VACCEL_ARGS_H__
+#define __VACCEL_ARGS_H__
 
-#define VACCELRT_VERSION "9070c57-dirty"
+#include "include/vaccel_args.h"
 
-#include <stdint.h>
-#include <stddef.h>
-
-#include "error.h"
-
-#include "ops/blas.h"
-#include "ops/exec.h"
-#include "ops/genop.h"
-#include "ops/image.h"
-#include "ops/noop.h"
-#include "ops/fpga.h"
-#include "ops/opencv.h"
-#include "ops/vaccel_ops.h"
-#include "ops/torch.h"
-
-const char *vaccel_rundir(void);
-
-#endif /* __VACCEL_H__ */
+#endif

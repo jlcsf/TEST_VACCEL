@@ -16,6 +16,7 @@
 #define __VACCEL_GENOP_H__
 
 #include <stdint.h>
+#include "vaccel_args.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,10 +24,6 @@ extern "C" {
 
 struct vaccel_session;
 
-struct vaccel_arg {
-	uint32_t size;
-	void *buf;
-};
 
 /* Call one of the supported functions, given an op code and a set of arbitrary
  * arguments */
