@@ -169,7 +169,6 @@ jobs:
       continue-on-error: true
 
   coverage_diff:
-    needs: [checkpatch, spell_check]
     runs-on: ubuntu-latest
     outputs:
       commit_hash: ${{ steps.commit-and-push.outputs.commit_hash }}
