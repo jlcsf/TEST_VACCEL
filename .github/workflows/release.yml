@@ -1,11 +1,6 @@
 name: Release
 
-on:
-  pull_request:
-    types:
-      - closed
-
-  
+on: 
   workflow_dispatch:
   
 
