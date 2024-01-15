@@ -230,14 +230,12 @@ jobs:
     
     - name: Calculate coverage diff
       run: |
-        pycobertura diff main_vaccelrt/feat_vaccel_testing/test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 . > coverage_diff.txt
-        echo '```' > temp_file
-        cat ./coverage_diff.txt >> temp_file
-        echo -e '\n```' >> temp_file
-        mv temp_file ./coverage_diff.txt
-        rm -rf main_vaccelrt
+        output=$(pycobertura diff main_vaccelrt/feat_vaccel_testing/test/docs/coverage_main.xml test/docs/coverage_pr.xml -s1 . -s2 .)
+        echo "## Coverage Diff" > coverage_diff.md
+        echo "| File                        | Changes                | Lines Added | Percentage Change | Lines Changed |" >> coverage_diff.md
+        echo "|-----------------------------|------------------------|-------------|-------------------|---------------|" >> coverage_diff.md
+        echo "$output" | sed -n '/^TOTAL/p' | sed 's/�\[.*m//g' >> coverage_diff.md
       continue-on-error: true
-
     
     - name: PR comment with file
       uses: thollander/actions-comment-pull-request@v2
